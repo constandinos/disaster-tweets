@@ -69,8 +69,8 @@ def doc2vec_count_success_on_train_data(transformed_data, model):
 ##### END OF FUNCTIONS SECTION #####
 
 
-tweet_df = pd.read_csv('train.csv')
-test_df =pd.read_csv('test.csv')
+tweet_df = pd.read_csv('../dataset/train.csv')
+test_df =pd.read_csv('../dataset/test.csv')
 print("Number of tweets, features:",tweet_df.shape)
 
 tweets_text = list(tweet_df['text'])

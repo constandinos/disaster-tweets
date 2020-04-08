@@ -3,9 +3,6 @@ import numpy as np
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
-# install gensim for anaconda as follows:
-# conda install -c anaconda gensim
-from gensim.models import Word2Vec 
 
 ##### FUNCTIONS SECTION #####
 
@@ -67,8 +64,8 @@ def bag_of_words(train_data):
 ##### END OF FUNCTIONS SECTION #####
 
 
-tweet_df = pd.read_csv('train.csv')
-test_df =pd.read_csv('test.csv')
+tweet_df = pd.read_csv('../dataset/train.csv')
+test_df =pd.read_csv('../dataset/test.csv')
 print("Number of tweets, features: ",tweet_df.shape)
 
 tweets_text = list(tweet_df['text'])
