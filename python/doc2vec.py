@@ -11,7 +11,7 @@ import pandas as pd
 ##### FUNCTIONS SECTION #####
 def train_doc2vec_model(df, text, is_text_column = True):
     """
-    This function will train a Doc2vec model with the given document's content
+    This function will train a Doc2vec model with the given documents' content
     
     Parameters
     ----------
@@ -106,7 +106,7 @@ def doc2vec_embedding_testset(model, df, text, is_text_column = True):
     #print(corpus_tuple)
 
     corpus_d2v_format = list()
-    for i, corpus in enumerate(corpus_tuple):
+    for _, corpus in enumerate(corpus_tuple):
         tokens = corpus.split(' ') #gensim.utils.simple_preprocess(corpus)
         corpus_d2v_format.append(tokens)
 
