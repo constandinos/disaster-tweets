@@ -8,12 +8,11 @@ import torch
 # conda install -c conda-forge/label/cf202003 transformers
 import transformers as tr # transformers
 
-
-
-def bert_embedding(df,text,target,is_text_column = True):
+##### FUNCTIONS SECTION #####
+def bert_embedding_testset(df,text,is_text_column = True):
     """
     This function will apply to the given documents a pre-trained bert model and 
-    it will extract their features alongside their labels.
+    it will create their features.
     It produce 768 features by default.
     
     Parameters
@@ -25,18 +24,14 @@ def bert_embedding(df,text,target,is_text_column = True):
         If is_text_column is True then the argument must be a string which
         inticates which column of the dataframe contains the text of the docs.
         If is_text_column is False then the argument must be a list of strings
-        which are the contect of each document.
-    target: string
-        Inticates which column of the dataframe contains the label of the docs.
+        which are the content of each document.
     is_text_column: bool
         See description for parameter text.
 
     Returns
     -------
     features : numpy array
-        This array contains the extracted features for each document
-    label : pandas Series
-        Human readable error message, or None on success.
+        This array contains the created features for each document
     """
     ## Loading a pre-trained BERT model
     # Importing pre-trained DistilBert model and tokenizer
@@ -88,7 +83,7 @@ def bert_embedding(df,text,target,is_text_column = True):
     #print('Bert mask shape:',bert_mask.shape)
     
     
-    ## Running BERT model - feature extraction
+    ## Running BERT model - feature creation
     padded_tokens_torch = torch.tensor(padded_tokens, dtype=torch.int64)  
     bert_mask_torch = torch.tensor(bert_mask)
     
@@ -103,19 +98,55 @@ def bert_embedding(df,text,target,is_text_column = True):
     # is the value that we need from all the hidden layers to form the embedding.
     features = hidden_states[0][:,0,:].numpy()
     
+
+    return features
+
+
+def bert_embedding_trainset(df, text, target, is_text_column = True):
+    """
+    This function will apply to the given documents a pre-trained bert model and 
+    it will create their features alongside their labels.
+    It produce 768 features by default.
+    
+    Parameters
+    ----------
+    df : DataFrame
+        Documents' dataframe which contains the text and the target for each
+        document.
+    text : List of strings or string
+        If is_text_column is True then the argument must be a string which
+        inticates which column of the dataframe contains the text of the docs.
+        If is_text_column is False then the argument must be a list of strings
+        which are the content of each document.
+    target: string
+        Inticates which column of the dataframe contains the label of the docs.
+    is_text_column: bool
+        See description for parameter text.
+
+    Returns
+    -------
+    features : numpy array
+        This array contains the created features for each document
+    labels : pandas Series
+        Labels for each document.
+    """
+    features = bert_embedding_testset(df, text, is_text_column)
+    
     
     # Labels of train dataset
     labels = df[target]
 
 
     return features, labels
-    
+   
+##### END OF FUNCTIONS SECTION #####
+
 
 ## Import dataset
 tweet_df = pd.read_csv('../dataset/train.csv')
 print("Number of tweets, features:",tweet_df.shape)
 
-emb_features, labels = bert_embedding(tweet_df,'text','target')
+emb_features, labels = bert_embedding_trainset(tweet_df,'text','target')
 
 
 ## Test

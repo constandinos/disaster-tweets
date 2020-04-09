@@ -2,49 +2,160 @@
 reference: https://radimrehurek.com/gensim/auto_examples/tutorials/run_doc2vec_lee.html
 """
 
-import gensim
-# install gensim for anaconda as follows:
+# To install gensim for anaconda run:
 # conda install -c anaconda gensim
+from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 import numpy as np
 import pandas as pd
 
 ##### FUNCTIONS SECTION #####
-def doc2vec_create_corpus(lines, tokens_only=False):
+def train_doc2vec_model(df, text, is_text_column = True):
     """
-    This function will transform a list of tweets to
-    a list of lists of the words in each tweet.
-    If tokens_only is set to True it will not append
-    and it will not prepend the tags that are necessary
-    during the training process. 
+    This function will train a Doc2vec model with the given document's content
+    
+    Parameters
+    ----------
+    df : DataFrame
+        Documents' dataframe which contains the text and the target for each
+        document.
+    text : List of strings or string
+        If is_text_column is True then the argument must be a string which
+        inticates which column of the dataframe contains the text of the docs.
+        If is_text_column is False then the argument must be a list of strings
+        which are the content of each document.
+    is_text_column: bool
+        See description for parameter text.
+
+    Returns
+    -------
+    d2v_model : Gensim Doc2vec model
+        This model is trained with the given documents' content.
     """
-    transformed_corpus = list()
-    for i, line in enumerate(lines):
-        tokens = line.split(' ') #gensim.utils.simple_preprocess(line)
-        if tokens_only:
-            transformed_corpus.append(tokens)
-        else:
-            # Add tags for training data
-            transformed_corpus.append(gensim.models.doc2vec.TaggedDocument(tokens, [i]))
-    return transformed_corpus
+    ## Tag corpus data for training - doc2vec format
+    if (is_text_column):
+        corpus_tuple = tuple(df[text])
+    else:
+        corpus_tuple = tuple(text)
+    #print(corpus_tuple)
 
-def doc2vec_train_model(raw_lines):
+    tagged_corpus_list = list()
+    for i, corpus in enumerate(corpus_tuple):
+        tokens = corpus.split(' ') #gensim.utils.simple_preprocess(corpus)
+        
+        # Add tags for training data
+        tagged_corpus_list.append(TaggedDocument(tokens, [i]))
+
+
+    ## Train doc2vec model
+    vector_size = 50 #  Dimensionality of the feature vectors.
+    min_count = 2 # Ignores all words with total frequency lower than this.
+    dm = 0  # Defines the training algorithm. If dm=1, ‘distributed memory’ (PV-DM) is used. 
+            # Otherwise, distributed bag of words (PV-DBOW) is employed.
+    epochs = 100 # Number of iterations (epochs) over the corpus.
+    alpha = 0.025 # The initial learning rate.
+
+    d2v_model = Doc2Vec(vector_size = vector_size,\
+                        min_count = min_count,\
+                        dm = dm,\
+                        epochs = epochs,\
+                        alpha = alpha,\
+                        min_alpha=0.0025) # use fixed learning rate
+    
+    d2v_model.build_vocab(tagged_corpus_list)
+
+    # Produces better results if you repeat the procedure and
+    # each time decreasing the learning rate
+ 
+    d2v_model.train(tagged_corpus_list,\
+                    total_examples = d2v_model.corpus_count,\
+                    epochs = d2v_model.epochs)
+
+    return d2v_model
+
+
+def doc2vec_embedding_testset(model, df, text, is_text_column = True):
     """
-    This function will train a doc2vec model with
-    the given tweets, which must be a list of
-    tweet strings.
+    This function will create features for the given documents by using
+    the given doc2vec pre-trained model
+    
+    Parameters
+    ----------
+    model : Gensim Doc2vec model
+        Pre-trained Doc2vec model
+    df : DataFrame
+        Documents' dataframe which contains the text and the target for each
+        document.
+    text : List of strings or string
+        If is_text_column is True then the argument must be a string which
+        inticates which column of the dataframe contains the text of the docs.
+        If is_text_column is False then the argument must be a list of strings
+        which are the content of each document.
+    is_text_column: bool
+        See description for parameter text.
+
+    Returns
+    -------
+    features : numpy array
+        This array contains the created features for each document
     """
-    train_corpus = doc2vec_create_corpus(raw_lines)
-    model = gensim.models.doc2vec.Doc2Vec(vector_size=50, min_count=2, epochs=40)
-    model.build_vocab(train_corpus)
+    ## doc2vec format - to infer features vector
+    if (is_text_column):
+        corpus_tuple = tuple(df[text])
+    else:
+        corpus_tuple = tuple(text)
+    #print(corpus_tuple)
 
-    model.train(train_corpus, total_examples=model.corpus_count, epochs=model.epochs)
+    corpus_d2v_format = list()
+    for i, corpus in enumerate(corpus_tuple):
+        tokens = corpus.split(' ') #gensim.utils.simple_preprocess(corpus)
+        corpus_d2v_format.append(tokens)
 
-    transformed_data = \
-        [model.infer_vector(train_corpus[i].words) for i in range(len(train_corpus))]
-    transformed_data = np.array([np.array(x) for x in transformed_data])
-    return  transformed_data, model
 
-def doc2vec_count_success_on_train_data(transformed_data, model):
+    features = [model.infer_vector(corpus_d2v_format[i]) for i in range(len(corpus_d2v_format))]
+    features = np.array([np.array(x) for x in features])
+
+    return features
+
+
+def doc2vec_embedding_trainset(model, df, text, target, is_text_column = True):
+    """
+    This function will create features for the given documents by using
+    the given doc2vec pre-trained model
+    
+    Parameters
+    ----------
+    model : Gensim Doc2vec model
+        Pre-trained Doc2vec model
+    df : DataFrame
+        Documents' dataframe which contains the text and the target for each
+        document.
+    text : List of strings or string
+        If is_text_column is True then the argument must be a string which
+        inticates which column of the dataframe contains the text of the docs.
+        If is_text_column is False then the argument must be a list of strings
+        which are the content of each document.
+    target: string
+        Inticates which column of the dataframe contains the label of the docs.
+    is_text_column: bool
+        See description for parameter text.
+
+    Returns
+    -------
+    features : numpy array
+        This array contains the created features for each document
+    labels : pandas Series
+        Labels for each document
+    """
+    features = doc2vec_embedding_testset(model, df, text, is_text_column)
+
+    # Labels of train dataset
+    labels = df[target]
+
+
+    return features, labels
+
+
+def doc2vec_evaluate_success_on_train_data(transformed_data, model):
     """
     This function will evaluate a doc2vec model. The evaluation
     will be done with the vectors of the training data that 
@@ -69,18 +180,42 @@ def doc2vec_count_success_on_train_data(transformed_data, model):
 ##### END OF FUNCTIONS SECTION #####
 
 
+## Import dataset
 tweet_df = pd.read_csv('../dataset/train.csv')
-test_df =pd.read_csv('../dataset/test.csv')
 print("Number of tweets, features:",tweet_df.shape)
 
-tweets_text = list(tweet_df['text'])
+model = train_doc2vec_model(tweet_df, 'text')
+emb_features, labels = doc2vec_embedding_trainset(model, tweet_df, 'text', 'target')
 
-transformed_data, model = doc2vec_train_model(tweets_text)
 
-#test_corpus = doc2vec_corpus(tweets, tokens_only=True)
-# print(transformed_data)
+## Test
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
 
-doc2vec_count_success_on_train_data(transformed_data, model)
-# print(model.infer_vector(test_corpus[0]))
-# print(test_corpus)
+train_features, test_features, train_labels, test_labels = train_test_split(emb_features, labels)
 
+
+## Searching for the best value of the C parameter, which determines regularization strength
+#from sklearn.model_selection import GridSearchCV
+#parameters = {'C': np.linspace(0.0001, 100, 20)}
+#grid_search = GridSearchCV(LogisticRegression(), parameters)
+#grid_search.fit(train_features, train_labels)
+
+#print('best parameters: ', grid_search.best_params_)
+#print('best scrores: ', grid_search.best_score_)
+
+lr_clf = LogisticRegression()
+lr_clf.fit(train_features, train_labels)
+
+#print(lr_clf.score(test_features, test_labels))
+
+# Get the predictions for the test data
+y_pred = lr_clf.predict(test_features)
+
+# Print classification reports for Linear Regression
+from sklearn.metrics import classification_report
+print("Linear Regression Classifier:")
+print(classification_report(test_labels, y_pred))
+
+
+#doc2vec_evaluate_success_on_train_data(emb_features, model)
