@@ -5,7 +5,7 @@ import pandas as pd
 
 import string
 import re
-from emot.emo_unicode import UNICODE_EMO, EMOTICONS
+from emot.emo_unicode import UNICODE_EMO, EMOTICONS # reference https://github.com/NeelShah18/emot
 
 import nltk
 from nltk.corpus import stopwords
@@ -363,7 +363,10 @@ def preprocess_tweet(tweet, abbreviation_dict, contraction_dict):
 # %%
 for index, row in train_df.iterrows():
     train_df.at[index, 'processed_text'] = ' '.join(preprocess_tweet(row['text'], abbreviation_dict, contraction_dict))
-    train_df.at[index, 'processed_URLs'] = ' '.join(preprocess_tweet(' '.join([word for word in extractTextFromURLs(listURLs(row['text'])).split() if all(c in string.printable and not c.isdigit() for c in word) and len(word)>3]), abbreviation_dict, contraction_dict))
+    try:
+        train_df.at[index, 'processed_URLs'] = ' '.join(preprocess_tweet(' '.join([word for word in extractTextFromURLs(listURLs(row['text'])).split() if all(c in string.printable and not c.isdigit() for c in word) and len(word)>3]), abbreviation_dict, contraction_dict))
+    except:
+        print('Error reaching URL for record #{}'.format(index))    
     print("record #{} processing finished".format(index))
 
 train_df.to_csv('../dataset/train_processed.csv')
