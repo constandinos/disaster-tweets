@@ -55,12 +55,12 @@ def bert_embedding_testset(df,text,is_text_column = True):
     ## Tokenization
     # Tokenize every sentece - BERT format (list of lists)
     if (is_text_column) :
-        tokenized = df[text].apply((lambda x: tokenizer.encode(x, add_special_tokens=True)))
+        tokenized = df[text].apply((lambda x: tokenizer.encode(str(x), add_special_tokens=True)))
     else:
         text_df = pd.DataFrame(text)
-        tokenized = text_df[0].apply((lambda x: tokenizer.encode(x, add_special_tokens=True)))
+        tokenized = text_df[0].apply((lambda x: tokenizer.encode(str(x), add_special_tokens=True)))
     #print(tokenized.head())
-    
+    print(type(tokenized))
     
     ## Padding
     # Find the length of the longer sentence of tokens
@@ -143,8 +143,12 @@ def bert_embedding_trainset(df, text, target, is_text_column = True):
 
 
 ## Import dataset
-tweet_df = pd.read_csv('../dataset/train.csv')
+tweet_df = pd.read_csv('../dataset/train_processed_lem.csv')
+test_df = pd.read_csv('../dataset/test.csv')
 print("Number of tweets, features:",tweet_df.shape)
+
+#print(tweet_df['processed_text'])
+#print(type(tweet_df['processed_text']))
 
 emb_features, labels = bert_embedding_trainset(tweet_df,'text','target')
 
@@ -177,3 +181,47 @@ y_pred = lr_clf.predict(test_features)
 from sklearn.metrics import classification_report
 print("Linear Regression Classifier:")
 print(classification_report(test_labels, y_pred))
+
+
+
+
+
+
+
+
+
+# PCA
+from IPython.display import display
+import time
+from sklearn.decomposition import PCA
+
+def pca_components_evaluation(features_train):
+    columns = ["Num Components", "PCA Time", "Variance explained"]
+    dimensions_to_test = list(reversed([1,2,3,4,5] + [i for i in (range(10,200+1,10)) if i < features_train.shape[1]]))
+
+    pca_results_df = pd.DataFrame(0, index = dimensions_to_test, columns = columns)
+
+    for k in dimensions_to_test:
+        print("Handling num dimensions = ", k)
+        start_time = time.time()
+
+        # Instantiate PCA object with k components
+        pca = PCA(n_components=k)
+        pca.fit(features_train)
+        
+        # Transform the training class data
+        #features_train_pca = pca.transform(features_train)
+        
+        pca_time = time.time() - start_time
+        
+        variance = np.sum(pca.explained_variance_ratio_)
+
+        # Update df
+        pca_results_df.loc[k] = [k, pca_time, variance]
+        
+    display(pca_results_df)
+
+pca_components_evaluation(emb_features)
+
+
+

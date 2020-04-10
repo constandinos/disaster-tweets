@@ -36,6 +36,7 @@ def train_doc2vec_model(df, text, is_text_column = True):
         corpus_tuple = tuple(df[text])
     else:
         corpus_tuple = tuple(text)
+    corpus_tuple = (str(x) for x in corpus_tuple)
     #print(corpus_tuple)
 
     tagged_corpus_list = list()
@@ -103,6 +104,7 @@ def doc2vec_embedding_testset(model, df, text, is_text_column = True):
         corpus_tuple = tuple(df[text])
     else:
         corpus_tuple = tuple(text)
+    corpus_tuple = (str(x) for x in corpus_tuple)
     #print(corpus_tuple)
 
     corpus_d2v_format = list()
@@ -181,7 +183,7 @@ def doc2vec_evaluate_success_on_train_data(transformed_data, model):
 
 
 ## Import dataset
-tweet_df = pd.read_csv('../dataset/train.csv')
+tweet_df = pd.read_csv('../dataset/train_processed_lem.csv')
 print("Number of tweets, features:",tweet_df.shape)
 
 model = train_doc2vec_model(tweet_df, 'text')
@@ -204,7 +206,7 @@ train_features, test_features, train_labels, test_labels = train_test_split(emb_
 #print('best parameters: ', grid_search.best_params_)
 #print('best scrores: ', grid_search.best_score_)
 
-lr_clf = LogisticRegression()
+lr_clf = LogisticRegression(C=5.263252631578947)
 lr_clf.fit(train_features, train_labels)
 
 #print(lr_clf.score(test_features, test_labels))

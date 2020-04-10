@@ -25,6 +25,7 @@ def get_vectorizer(train_data, tf_idf = True, analyzer = 'word', ngram_range = (
         This array contains the created features for each document for the training set
     vectorizer : TfidVectorizer or CountVectorizer
     """
+    train_data = [str(x) for x in train_data]
     if (tf_idf):
         # initialize tf-idf vectorizer
         vectorizer = TfidfVectorizer(analyzer = 'word',\
@@ -52,10 +53,10 @@ def get_vectorizer(train_data, tf_idf = True, analyzer = 'word', ngram_range = (
 ##### END OF FUNCTIONS SECTION #####
 
 
-tweet_df = pd.read_csv('../dataset/train.csv')
+tweet_df = pd.read_csv('../dataset/train_processed_lem.csv')
 print("Number of tweets, features: ",tweet_df.shape)
 
-tweets_text = list(tweet_df['text'])
+tweets_text = list(tweet_df['processed_text'])
 labels = tweet_df['target']
 
 
@@ -102,3 +103,46 @@ features, vectorizer_bow = get_vectorizer(tweets_text,False)
 # Vocabulary words
 #vocabulary_bow = vectorizer_bow.get_feature_names()
 lr(features,labels)
+
+
+
+
+# TruncatedSVD
+from IPython.display import display
+import time
+import numpy as np
+from sklearn.decomposition import TruncatedSVD
+
+def tsvd_components_evaluation(features_train):
+    columns = ["Num Components", "PCA Time", "Variance explained"]
+    dimensions_to_test = list(reversed([1,2,3,4,5] + [i for i in (range(10,200+1,10)) if i < features_train.shape[1]]))
+
+    tsvd_results_df = pd.DataFrame(0, index = dimensions_to_test, columns = columns)
+
+    for k in dimensions_to_test:
+        print("Handling num dimensions = ", k)
+        start_time = time.time()
+
+        # Instantiate TruncatedSVD object with k components
+        tsvd = TruncatedSVD(n_components=k)
+        tsvd.fit(features_train)
+        
+        # Transform the training class data
+        #features_train_lda = lda.transform(features_train)
+        
+        tsvd_time = time.time() - start_time
+        
+        variance = np.sum(tsvd.explained_variance_ratio_)
+
+        # Update df
+        tsvd_results_df.loc[k] = [k, tsvd_time, variance]
+        
+    display(tsvd_results_df)
+
+tsvd_components_evaluation(features)
+
+
+
+
+
+
