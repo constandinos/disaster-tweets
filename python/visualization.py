@@ -34,7 +34,11 @@ def create_punctuation_dictionary(words):
 
 train_data = pd.read_csv('../dataset/train.csv')
 test_data = pd.read_csv('../dataset/test.csv')
-
+# nltk.download('stopwords')
+stop_words = set(stopwords.words('english'))
+train_data.set_index('id', inplace=True)
+print(train_data['location'])
+'''
 count_row = train_data.shape[0]  # gives number of row count
 count_col = train_data.shape[1]  # gives number of col count
 print("Total number of rows = " + str(count_row))
@@ -95,8 +99,6 @@ ax2.set_title('Not disaster tweets')
 fig.suptitle('Average word length in each tweets')
 plt.show()
 
-# nltk.download('stopwords')
-stop_words = set(stopwords.words('english'))
 disaster_all_words = create_all_words(1)
 not_disaster_all_words = create_all_words(0)
 
@@ -159,3 +161,22 @@ ax2.set_title('Not disaster tweets')
 ax2.set_xlabel('Most frequent words')
 ax2.set_ylabel('Frequency')
 plt.show()
+
+#Graph 7: Missing values
+disaster_count_of_missing_keyword = train_data[train_data['target'] == 1]['keyword'].isnull().sum();
+not_disaster_count_of_missing_keyword = train_data[train_data['target'] == 0]['keyword'].isnull().sum();
+disaster_count_of_missing_location = train_data[train_data['target'] == 1]['location'].isnull().sum();
+not_disaster_count_of_missing_location = train_data[train_data['target'] == 0]['location'].isnull().sum();
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+ax1.bar('keyword', disaster_count_of_missing_keyword, color='tab:blue')
+ax1.bar('location', disaster_count_of_missing_location, color='tab:blue')
+ax1.set_title('Disaster tweets')
+ax1.set_ylabel('Count of missing values')
+ax2.bar('keyword', not_disaster_count_of_missing_keyword, color='tab:red')
+ax2.bar('location', not_disaster_count_of_missing_location, color='tab:red')
+ax2.set_title('Not disaster tweets')
+ax2.set_ylabel('Count of missing values')
+fig.suptitle('Missing values')
+plt.show()
+
+'''
