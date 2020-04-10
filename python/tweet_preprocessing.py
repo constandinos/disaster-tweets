@@ -87,7 +87,12 @@ def extractTextFromURLs(urls):
     """
     extracted = ''
     for url in urls:
-        res = requests.get(url)
+        try:
+            res = requests.get(url)
+        except Exception as e:
+            print(e)
+            continue
+                
         html_page = res.content
         soup = BeautifulSoup(html_page, 'html.parser')
         text = soup.find_all(text=True)
@@ -167,6 +172,18 @@ def removeUsernames(tweet):
         string: given tweet with usernames removed.   
     """
     return re.sub('@[^\s]+', '', tweet)
+
+def removeRepeatedChars(tweet):
+    """
+    Reduces repeated consecutive characters from given tweet to only two.
+    
+    Parameters:
+        tweet (string): tweet to be processed.
+    
+    Returns: 
+        string: given tweet with repeated characters removed.   
+    """
+    return re.sub(r'(.)\1+', r'\1\1', tweet)
 
 # %% [markdown]
 # # Format related functions
@@ -338,10 +355,12 @@ def lemmatization(tweet_list):
 # %%
 def preprocess_tweet(tweet, abbreviation_dict, contraction_dict):
     tweet = replaceEmojis(tweet)
+    tweet = replaceEmoticons(tweet)
     tweet = removeNonAscii(tweet)
     tweet = removeURLs(tweet)
     tweet = removeUsernames(tweet)
     tweet = removeNonPrintable(tweet)
+    tweet = removeRepeatedChars(tweet)
     
     tweet = toLowerCase(tweet)
 
@@ -356,18 +375,21 @@ def preprocess_tweet(tweet, abbreviation_dict, contraction_dict):
     
     tweet_list = removeStopWords(tweet_list)
     tweet_list = lemmatization(tweet_list)
-    tweet_list = stemming(tweet_list)
+    #tweet_list = stemming(tweet_list)
     return tweet_list
 
 
 # %%
-for index, row in train_df.iterrows():
+for index, row in train_df[:40].iterrows():
     train_df.at[index, 'processed_text'] = ' '.join(preprocess_tweet(row['text'], abbreviation_dict, contraction_dict))
-    try:
-        train_df.at[index, 'processed_URLs'] = ' '.join(preprocess_tweet(' '.join([word for word in extractTextFromURLs(listURLs(row['text'])).split() if all(c in string.printable and not c.isdigit() for c in word) and len(word)>3]), abbreviation_dict, contraction_dict))
-    except:
-        print('Error reaching URL for record #{}'.format(index))    
+ 
+    urltext = extractTextFromURLs(listURLs(row['text']))
+    if(not urltext):
+        train_df.at[index, 'processed_URLs'] = 'NaN'
+    elif any(word in urltext.lower() for word in ['not found', 'unavailable', 'error', '404', 'not available', 'is’t available', 'access is denied', 'page doesn’t exist']):
+        train_df.at[index, 'processed_URLs'] = 'Page not found'
+    else:
+        train_df.at[index, 'processed_URLs'] = "Page found"
     print("record #{} processing finished".format(index))
 
 train_df.to_csv('../dataset/train_processed.csv')
-
