@@ -354,11 +354,11 @@ def lemmatization(tweet_list):
 
 # %%
 def preprocess_tweet(tweet, abbreviation_dict, contraction_dict):
+    tweet = removeURLs(tweet)
+    tweet = removeUsernames(tweet)
     tweet = replaceEmojis(tweet)
     tweet = replaceEmoticons(tweet)
     tweet = removeNonAscii(tweet)
-    tweet = removeURLs(tweet)
-    tweet = removeUsernames(tweet)
     tweet = removeNonPrintable(tweet)
     tweet = removeRepeatedChars(tweet)
     
@@ -380,7 +380,7 @@ def preprocess_tweet(tweet, abbreviation_dict, contraction_dict):
 
 
 # %%
-for index, row in train_df[:40].iterrows():
+for index, row in train_df.iterrows():
     train_df.at[index, 'processed_text'] = ' '.join(preprocess_tweet(row['text'], abbreviation_dict, contraction_dict))
  
     urltext = extractTextFromURLs(listURLs(row['text']))
