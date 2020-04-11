@@ -60,7 +60,7 @@ def bert_embedding_testset(df,text,is_text_column = True):
         text_df = pd.DataFrame(text)
         tokenized = text_df[0].apply((lambda x: tokenizer.encode(str(x), add_special_tokens=True)))
     #print(tokenized.head())
-    print(type(tokenized))
+    #print(type(tokenized))
     
     ## Padding
     # Find the length of the longer sentence of tokens
@@ -143,7 +143,7 @@ def bert_embedding_trainset(df, text, target, is_text_column = True):
 
 
 ## Import dataset
-tweet_df = pd.read_csv('../dataset/train_processed_lem.csv')
+tweet_df = pd.read_csv('../dataset/train.csv')
 test_df = pd.read_csv('../dataset/test.csv')
 print("Number of tweets, features:",tweet_df.shape)
 
