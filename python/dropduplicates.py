@@ -1,6 +1,7 @@
 import pandas as pd
 
 df = pd.read_csv('../dataset/train_processed.csv')
+group = df.groupby('processed_lem')['id'].unique()
 
 drop_id = []
 count_different_target = 0 # number of tuples, its elements have different target value
