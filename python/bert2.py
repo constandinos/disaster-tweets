@@ -243,6 +243,7 @@ class DisasterDetector:
         """
         Train the nn model with the given X and its labels Y.
         """
+        X = [str(x) for x in X]
         if (tokens):
             X_encoded = self.encode(X)
         else:
@@ -265,6 +266,7 @@ class DisasterDetector:
 
         Works only with features method not the tokens one.
         """
+        X = [str(x) for x in X]
         X_encoded = self.bert_feature_creation(X)
         Y = np.array(Y)
 
@@ -287,6 +289,7 @@ class DisasterDetector:
         It will apply  the same method (tokens or features) as the train did
         the last time it was called.
         """
+        X = [str(x) for x in X]
         if self.method is None:
             return np.zeros((len(X), 1))
 
@@ -305,6 +308,8 @@ class DisasterDetector:
     def load_model(self, tokens, file):
         """
         Load a nn model.
+
+        If it is a token method model then pass True to the argument tokens.
         """
         if (tokens == True):
             self.nn_model = load_model(file)
