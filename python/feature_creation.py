@@ -411,37 +411,37 @@ from sklearn.linear_model import LogisticRegression
 
 def grid_search_cross_validation(clf_list, x_train, y_train, k_folds=10, score_type='f1_macro'):
     """
-        This function will apply grid search to search over specified parameter values
-        for an estimator to find the optimal parameters for a machine learning algorithm.
-        Also, this function will apply k-folds cross validation to calculate the average
-        f1_macro score in order to select the machine learning algorithm with highest
-        score.
+	This function will apply grid search to search over specified parameter values
+	for an estimator to find the optimal parameters for a machine learning algorithm.
+	Also, this function will apply k-folds cross validation to calculate the average
+	f1_macro score in order to select the machine learning algorithm with highest
+	score.
 
-        Parameters
-        ----------
-        clf_list: list of tuples with name of
-            Each tuple contains the name of machine learning algorithm, the initialization
-            estimator and a set with the parameters
-        x_train: numpy array
-            The train data
-        y_train: numpy array
-            The labels of train data
-        k_folds: integer
-            The number of folds
-        score_type: string
-            The name of score type
+	Parameters
+	----------
+	clf_list: list of tuples with name of
+		Each tuple contains the name of machine learning algorithm, the initialization
+		estimator and a set with the parameters
+	x_train: numpy array
+		The train data
+	y_train: numpy array
+		The labels of train data
+	k_folds: integer
+		The number of folds
+	score_type: string
+		The name of score type
 
-        Returns
-        -------
-        model_names: list of strings
-            This list contains the names of machine learning algorithms
-        model_scores: list of floats
-            This list contains the best cross validation f1 scores of machine learning
-            algorithms
-        model_std: list of floats
-            This list contains the cross validation standard deviations of machine learning
-            algorithms
-     """
+	Returns
+	-------
+	model_names: list of strings
+		This list contains the names of machine learning algorithms
+	model_scores: list of floats
+		This list contains the best cross validation f1 scores of machine learning
+		algorithms
+	model_std: list of floats
+		This list contains the cross validation standard deviations of machine learning
+		algorithms
+   """
 
     model_names, model_scores, model_std = [], [], []  # return list
 
@@ -469,21 +469,21 @@ import matplotlib.pyplot as plt
 
 def plot_graphs(title_name, labels, f1_score, std):
     """
-           This function will plot the results of cross validation for each machine
-           learning algorithm
+    This function will plot the results of cross validation for each machine
+    learning algorithm
 
-           Parameters
-           ----------
-            title_name: string
-               Method that extracts features
-            labels: list of strings
-               This list contains the names of machine learning algorithms
-            f1_score: list of floats
-                This list contains the best cross validation f1 scores of machine learning
-                algorithms
-            std: list of floats
-                This list contains the cross validation standard deviations of machine learning
-                algorithms
+    Parameters
+    ----------
+	title_name: string
+		Method that extracts features
+    labels: list of strings
+        This list contains the names of machine learning algorithms
+    f1_score: list of floats
+		This list contains the best cross validation f1 scores of machine learning
+		algorithms
+	std: list of floats
+		his list contains the cross validation standard deviations of machine learning
+		algorithms
     """
 
     fig, axes = plt.subplots(1, 2, figsize=(12, 6))
