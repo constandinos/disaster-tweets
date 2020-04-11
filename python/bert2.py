@@ -331,16 +331,16 @@ bert_layer = hub.KerasLayer('https://tfhub.dev/tensorflow/bert_en_uncased_L-12_H
 clf = DisasterDetector(bert_layer, lr=0.00001, epochs=5, batch_size=32)
 
 
-df_train = pd.read_csv('dataset/train_dropduplicates.csv')
-df_test = pd.read_csv('dataset/test.csv')
+df_train = pd.read_csv('../dataset/train_dropduplicates.csv')
+df_test = pd.read_csv('../dataset/test_processed.csv')
 print("Number of tweets, features:",df_train.shape)
 print("Number of test, features:",df_test.shape)
 
 #clf.cross_validation(list(df_train['text']),list(df_train['target']))
 
 
-clf.train(list(df_train['processed_lem_key']),list(df_train['target']), tokens=True)
-y_pred = clf.predict(list(df_test['text']))
+clf.train([str(x) for x in list(df_train['processed_lem'])],list(df_train['target']), tokens=True)
+y_pred = clf.predict([str(x) for x in list(df_test['processed_lem'])])
 df = pd.DataFrame(y_pred)
 df.to_csv('tokenspr.csv', sep='\t', encoding='utf-8')
 
