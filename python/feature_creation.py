@@ -4,8 +4,9 @@ import time
 
 from IPython.display import display
 
-
-
+import warnings
+# Ignore all warnings
+warnings.filterwarnings("ignore")
 
 #==============================================================================#
 #                              DistilBert / Bert                               #
@@ -397,6 +398,103 @@ def dimensionality_reduction(n_components, train_features, test_features,\
 #==============================================================================#
 
 
+#==============================================================================#
+#                     Grid Search and Cross Validation                         #
+#==============================================================================#
+from sklearn.model_selection import GridSearchCV
+from sklearn import model_selection
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+
+def grid_search_cross_validation(clf_list, x_train, y_train, k_folds=10, score_type='f1_macro'):
+    """
+        This function will apply grid search to search over specified parameter values
+        for an estimator to find the optimal parameters for a machine learning algorithm.
+        Also, this function will apply k-folds cross validation to calculate the average
+        f1_macro score in order to select the machine learning algorithm with highest
+        score.
+
+        Parameters
+        ----------
+        clf_list: list of tuples with name of
+            Each tuple contains the name of machine learning algorithm, the initialization
+            estimator and a set with the parameters
+        x_train: numpy array
+            The train data
+        y_train: numpy array
+            The labels of train data
+        k_folds: integer
+            The number of folds
+        score_type: string
+            The name of score type
+
+        Returns
+        -------
+        model_names: list of strings
+            This list contains the names of machine learning algorithms
+        model_scores: list of floats
+            This list contains the best cross validation f1 scores of machine learning
+            algorithms
+        model_std: list of floats
+            This list contains the cross validation standard deviations of machine learning
+            algorithms
+     """
+
+    model_names, model_scores, model_std = [], [], []  # return list
+
+    for name, model, parameters in clf_list:
+        # grid search
+        search = GridSearchCV(model, parameters, scoring=score_type)
+        search.fit(x_train, y_train)
+        # print(search.best_params_)
+        best_est = search.best_estimator_  # estimator with the best parameters
+        # k-fold cross validation
+        kfold = model_selection.KFold(n_splits=k_folds)
+        f1_score = model_selection.cross_val_score(best_est, x_train, y_train, cv=kfold, scoring=score_type)
+        # append results to the return lists
+        model_names.append(name)
+        model_scores.append(f1_score.mean())
+        model_std.append(f1_score.std())
+
+    return model_names, model_scores, model_std
+
+
+#==============================================================================#
+#                     Visualize the cross validation results                   #
+#==============================================================================#
+import matplotlib.pyplot as plt
+
+def plot_graphs(title_name, labels, f1_score, std):
+    """
+           This function will plot the results of cross validation for each machine
+           learning algorithm
+
+           Parameters
+           ----------
+            title_name: string
+               Method that extracts features
+            labels: list of strings
+               This list contains the names of machine learning algorithms
+            f1_score: list of floats
+                This list contains the best cross validation f1 scores of machine learning
+                algorithms
+            std: list of floats
+                This list contains the cross validation standard deviations of machine learning
+                algorithms
+    """
+
+    fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+    axes[0].bar(labels, f1_score, color='tab:green')
+    axes[0].set_ylabel('f1 score')
+    axes[1].bar(labels, std, color='tab:orange')
+    axes[1].set_ylabel('Standard Deviation')
+    fig.suptitle(title_name)
+    fig.savefig(title_name+'.png')
+    plt.show()
+    plt.close(fig)
 
 
 #==============================================================================#
@@ -404,7 +502,6 @@ def dimensionality_reduction(n_components, train_features, test_features,\
 #==============================================================================#
 
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
 
 
@@ -428,24 +525,38 @@ def execute(df, bert = False, doc2vec = False, tfidf = False, bow = False):
     docs = list(df['processed_text'])
     labels = df['target']
 
+    clf_list = [("Logistic Regression", LogisticRegression(), {}),
+                ("K-Neighbors Classifier", KNeighborsClassifier(), {'n_neighbors': [4, 5]}),
+                ("Multi-layer Perceptron", MLPClassifier(), {}),
+                ("Random Forest", RandomForestClassifier(), {}),
+                ("SVM", SVC(), {})]
+    
     if (bert):
         features = bert_feature_creation(docs)
-        reports(features, labels, 'BERT',pca=True)
+        #reports(features, labels, 'BERT',pca=True)
+        model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
+        plot_graphs('BERT', model_names, model_scores, model_std)
     
     if (doc2vec):
         model = train_doc2vec_model(docs)
         features = doc2vec_feature_creation(model,docs)
-        reports(features, labels, 'DOC2VEC',pca=True)
+        #reports(features, labels, 'DOC2VEC',pca=True)
+        model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
+        plot_graphs('DOC2VEC', model_names, model_scores, model_std)
 
     if (tfidf):
         features, _ = train_vectorizer(docs,tf_idf=True)
-        reports(features, labels, 'TFIDF',pca=False)
-        
+        #reports(features, labels, 'TFIDF',pca=False)
+        model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
+        plot_graphs('TFIDF', model_names, model_scores, model_std)
+    
     if (bow):
         features, _ = train_vectorizer(docs,tf_idf=False)
-        reports(features, labels, 'Bag of words',pca=False)
+        #reports(features, labels, 'Bag of words',pca=False)
+        model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
+        plot_graphs('Bag of words', model_names, model_scores, model_std)
 
- 
+
 
 ## Read datasets
 tweet_df = pd.read_csv('../dataset/train_processed_lem.csv')
