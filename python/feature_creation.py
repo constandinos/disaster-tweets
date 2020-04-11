@@ -525,20 +525,20 @@ def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
     docs = list(df['processed_text'])
     labels = df['target']
 
-    clf_list = [("Logistic Regression", LogisticRegression(), {'classifier__penalty': ['l1', 'l2'], \
-                                                               'classifier__C': np.logspace(-4, 4, 20)}),
+    clf_list = [("logistic_regression", LogisticRegression(), {'penalty': ['l1', 'l2'], \
+                                                               'C': np.logspace(-4, 4, 20)}),
                 ("k-nn", KNeighborsClassifier(), {'n_neighbors': np.arange(1, 25),  \
                                                   'metric': ['euclidean', 'manhattan']}),
-                ("MLP", MLPClassifier(), {'hidden_layer_sizes': [(50,50,50), (50,100,50), (100,)], \
+                ("mlp", MLPClassifier(), {'hidden_layer_sizes': [(50,50,50), (50,100,50), (100,)], \
                                           'alpha': [0.0001, 0.05],\
                                           'learning_rate': ['constant','adaptive']}),
-                ("Random Forest", RandomForestClassifier(), {'n_estimators': [200, 500, 1000], \
+                ("random_forest", RandomForestClassifier(), {'n_estimators': [200, 500, 1000], \
                                                              'max_features': ['auto', 'sqrt', 'log2'], \
-                                                             'max_depth' : [5, 10, 15, 80]}),
-                ("SVC", SVC(), {'C': [0.1,1, 10, 100], \
+                                                             'max_depth' : [10, 80, 100, 200]}),
+                ("svc", SVC(), {'C': [0.1,1, 10, 100], \
                                 'gamma': [1,0.1,0.01,0.001],\
                                 'kernel': ['rbf', 'linear', 'sigmoid']})]
-    """
+
     if (bert):
         print("Running bert...")
         features = bert_feature_creation(docs)
@@ -547,7 +547,7 @@ def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
         model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
         plot_graphs('BERT', model_names, model_scores, model_std)
         print("----------------------------------------------------\n")
-    """
+
     if (doc2vec):
         print("Running doc2vec...")
         model = train_doc2vec_model(docs)
@@ -577,7 +577,7 @@ def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
         print("----------------------------------------------------\n")
 
 ## Read datasets
-tweet_df = pd.read_csv('../dataset/train_processed_stem.csv')
+tweet_df = pd.read_csv('../dataset/train_processed_lem.csv')
 test_df = pd.read_csv('../dataset/test.csv')
 print("Number of tweets, features:", tweet_df.shape)
 print("Number of test, features:", test_df.shape)
