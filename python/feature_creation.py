@@ -518,7 +518,7 @@ def reports(features, labels, model, pca):
 
 
 def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
-    docs = list(df['processed_lem_key'])
+    docs = list(df['processed_text_deep_without_url'])
     labels = df['target']
 
     clf_list = [("logistic_regression", LogisticRegression(), {'C': np.logspace(-4, 4, 20),\
@@ -535,7 +535,7 @@ def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
                 ("svc", SVC(), {'C': [0.1, 1, 10, 100], \
                                 'gamma': [0.01, 0.1, 1],\
                                 'kernel': ['rbf', 'linear', 'sigmoid']})]
-    """
+    
     if (bert):
         print("Running bert...")
         features = bert_feature_creation(docs)
@@ -544,7 +544,7 @@ def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
         model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
         plot_graphs('BERT', model_names, model_scores, model_std)
         print("----------------------------------------------------\n")
-    """
+    
     if (doc2vec):
         print("Running doc2vec...")
         model = train_doc2vec_model(docs)
@@ -574,9 +574,9 @@ def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
         print("----------------------------------------------------\n")
 
 def predict_results(train_df, test_df):
-    x_train = list(train_df['processed_lem_key'])
+    x_train = list(train_df['processed_text_deep_without_url'])
     y_train = train_df['target']
-    x_test = list(test_df['processed_lem_key'])
+    x_test = list(test_df['processed_text_deep_without_url'])
 
     features_train, vectorizer = train_vectorizer(x_train, tf_idf=False)
     features_test = vectorizer.transform(x_test)
@@ -589,11 +589,11 @@ def predict_results(train_df, test_df):
     df.to_csv('results.csv', index=False)
 
 ## Read datasets
-tweet_df = pd.read_csv('../dataset/train_dropduplicates.csv')
-test_df = pd.read_csv('../dataset/test_processed.csv')
+tweet_df = pd.read_csv('dataset/train_dropduplicates.csv')
+test_df = pd.read_csv('dataset/test_processed.csv')
 print("Number of tweets, features:", tweet_df.shape)
 print("Number of test, features:", test_df.shape)
-predict_results(tweet_df, test_df)
-#execute(tweet_df, bert=True, doc2vec=True, tfidf=True, bow=True)
+#predict_results(tweet_df, test_df)
+execute(tweet_df, bert=True, doc2vec=False, tfidf=False, bow=False)
 
 print("End execution")
