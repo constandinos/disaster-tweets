@@ -578,8 +578,8 @@ def predict_results(train_df, test_df):
     y_train = train_df['target']
     x_test = list(test_df['processed_text_deep_without_url'])
 
-    features_train, vectorizer = train_vectorizer(x_train, tf_idf=False)
-    features_test = vectorizer.transform(x_test)
+    features_train = bert_feature_creation(x_train)
+    features_test = bert_feature_creation(x_test)
 
     svc_clf = SVC(C=10, gamma=0.01, kernel='rbf')
     svc_clf.fit(features_train, y_train)
@@ -593,7 +593,7 @@ tweet_df = pd.read_csv('dataset/train_dropduplicates.csv')
 test_df = pd.read_csv('dataset/test_processed.csv')
 print("Number of tweets, features:", tweet_df.shape)
 print("Number of test, features:", test_df.shape)
-#predict_results(tweet_df, test_df)
-execute(tweet_df, bert=True, doc2vec=False, tfidf=False, bow=False)
+predict_results(tweet_df, test_df)
+#execute(tweet_df, bert=True, doc2vec=False, tfidf=False, bow=False)
 
 print("End execution")
