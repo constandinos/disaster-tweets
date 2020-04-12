@@ -214,8 +214,7 @@ class DisasterDetector:
         # Binary Cross-Entropy Loss is intended for use with binary 
         # classification where the target values are in the set {0, 1}.
         # The function requires that the output layer is configured with a 
-        # single node and a ‘sigmoid‘ activation in order to predict the 
-        # probability for class 1.
+        # single node and a ‘sigmoid‘ activation
         return model
     
 
@@ -331,21 +330,27 @@ class DisasterDetector:
 
 # Load Bert
 # Wraps a SavedModel (or a legacy Hub.Module) as a Keras Layer.
-bert_layer = hub.KerasLayer('https://tfhub.dev/tensorflow/bert_en_uncased_L-12_H-768_A-12/1', trainable=True)
+module_url_normal = 'https://tfhub.dev/tensorflow/bert_en_uncased_L-12_H-768_A-12/1'
+bert_layer_normal = hub.KerasLayer(module_url_normal, trainable=True)
+module_url_large = 'https://tfhub.dev/tensorflow/bert_en_uncased_L-24_H-1024_A-16/1'
+bert_layer_large = hub.KerasLayer(module_url_large, trainable=True)
 
-clf = DisasterDetector(bert_layer, lr=0.00001, epochs=5, batch_size=32)
+
+clf = DisasterDetector(bert_layer_normal, lr=0.00001, epochs=5, batch_size=32)
 
 
-df_train = pd.read_csv('../dataset/train_dropduplicates.csv')
-df_test = pd.read_csv('../dataset/test_processed.csv')
+df_train = pd.read_csv('dataset/train_dropduplicates.csv')
+df_test = pd.read_csv('dataset/test_processed.csv')
 print("Number of tweets, features:",df_train.shape)
 print("Number of test, features:",df_test.shape)
 
 #clf.cross_validation(list(df_train['text']),list(df_train['target']))
 
 
-clf.train([str(x) for x in list(df_train['processed_lem'])],list(df_train['target']), tokens=True)
-y_pred = clf.predict([str(x) for x in list(df_test['processed_lem'])])
-df = pd.DataFrame(y_pred)
-df.to_csv('tokenspr.csv', sep='\t', encoding='utf-8')
+#clf.train([str(x) for x in list(df_train['processed_lem'])],list(df_train['target']), tokens=True)
+#y_pred = clf.predict([str(x) for x in list(df_test['processed_lem'])])
+#df = pd.DataFrame(y_pred)
+#df.to_csv('tokenspr.csv', sep='\t', encoding='utf-8')
 
+features = clf.bert_feature_creation(['a lucky guy','good morning world'])
+print(features,features[0,0])
