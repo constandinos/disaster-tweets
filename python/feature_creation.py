@@ -4,11 +4,6 @@ import time
 
 from IPython.display import display
 
-import warnings
-
-# Ignore all warnings
-warnings.filterwarnings("ignore")
-
 # ==============================================================================#
 #                              DistilBert / Bert                               #
 # ==============================================================================#
@@ -451,7 +446,8 @@ def grid_search_cross_validation(clf_list, x_train, y_train, k_folds=10, score_t
         best_est = search.best_estimator_  # estimator with the best parameters
         # k-fold cross validation
         print("Start cross validation...")
-        kfold = model_selection.KFold(n_splits=k_folds)
+        #kfold = model_selection.StratifiedKFold(n_splits=k_folds, shuffle=True)
+        kfold = model_selection.KFold(n_splits=k_folds, shuffle=True)
         f1_score = model_selection.cross_val_score(best_est, x_train, y_train, cv=kfold, scoring=score_type, n_jobs=-1)
         # append results to the return lists
         model_names.append(name)
@@ -509,7 +505,7 @@ from sklearn.metrics import classification_report
 def reports(features, labels, model, pca):
     print('Reports for', model)
     train_features, test_features, train_labels, test_labels = \
-        train_test_split(features, labels)
+        train_test_split(features, labels, test_size=0.1, shuffle=True)
 
     reduction_components_evaluation_report(features, pca=pca)
     lr_clf = LogisticRegression()
@@ -522,23 +518,24 @@ def reports(features, labels, model, pca):
 
 
 def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
-    docs = list(df['processed_text'])
+    docs = list(df['processed_lem_key'])
     labels = df['target']
 
-    clf_list = [("logistic_regression", LogisticRegression(), {'penalty': ['l1', 'l2'], \
-                                                               'C': np.logspace(-4, 4, 20)}),
+    clf_list = [("logistic_regression", LogisticRegression(), {'C': np.logspace(-4, 4, 20),\
+                                                               'max_iter': [100, 200, 300, 400, 500]}),
                 ("k-nn", KNeighborsClassifier(), {'n_neighbors': np.arange(1, 25),  \
-                                                  'metric': ['euclidean', 'manhattan']}),
+                                                  'metric': ['euclidean', 'minkowski']}),
                 ("mlp", MLPClassifier(), {'hidden_layer_sizes': [(50,50,50), (50,100,50), (100,)], \
                                           'alpha': [0.0001, 0.05],\
-                                          'learning_rate': ['constant','adaptive']}),
+                                          'learning_rate': ['constant','adaptive'],\
+                                          'max_iter': [300, 500, 800, 1000, 2000]}),
                 ("random_forest", RandomForestClassifier(), {'n_estimators': [200, 500, 1000], \
-                                                             'max_features': ['auto', 'sqrt', 'log2'], \
-                                                             'max_depth' : [10, 80, 100, 200]}),
-                ("svc", SVC(), {'C': [0.1,1, 10, 100], \
-                                'gamma': [1,0.1,0.01,0.001],\
+                                                             'max_features': ['sqrt', 'log2'], \
+                                                             'max_depth' : [50, 100, 200, 300]}),
+                ("svc", SVC(), {'C': [0.1, 1, 10, 100], \
+                                'gamma': [0.01, 0.1, 1],\
                                 'kernel': ['rbf', 'linear', 'sigmoid']})]
-
+    """
     if (bert):
         print("Running bert...")
         features = bert_feature_creation(docs)
@@ -547,13 +544,13 @@ def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
         model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
         plot_graphs('BERT', model_names, model_scores, model_std)
         print("----------------------------------------------------\n")
-
+    """
     if (doc2vec):
         print("Running doc2vec...")
         model = train_doc2vec_model(docs)
         features = doc2vec_feature_creation(model, docs)
         print("Features created")
-        # reports(features, labels, 'DOC2VEC',pca=True)
+        reports(features, labels, 'DOC2VEC',pca=True)
         model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
         plot_graphs('DOC2VEC', model_names, model_scores, model_std)
         print("----------------------------------------------------\n")
@@ -562,7 +559,7 @@ def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
         print("Running tfidf...")
         features, _ = train_vectorizer(docs, tf_idf=True)
         print("Features created")
-        # reports(features, labels, 'TFIDF',pca=False)
+        reports(features, labels, 'TFIDF',pca=False)
         model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
         plot_graphs('TFIDF', model_names, model_scores, model_std)
         print("----------------------------------------------------\n")
@@ -571,15 +568,32 @@ def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
         print("Running bow...")
         features, _ = train_vectorizer(docs, tf_idf=False)
         print("Features created")
-        # reports(features, labels, 'Bag of words',pca=False)
+        reports(features, labels, 'Bag of words',pca=False)
         model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
         plot_graphs('Bag of words', model_names, model_scores, model_std)
         print("----------------------------------------------------\n")
 
+def predict_results(train_df, test_df):
+    x_train = list(train_df['processed_lem_key'])
+    y_train = train_df['target']
+    x_test = list(test_df['processed_lem_key'])
+
+    features_train, vectorizer = train_vectorizer(x_train, tf_idf=False)
+    features_test = vectorizer.transform(x_test)
+
+    svc_clf = SVC(C=10, gamma=0.01, kernel='rbf')
+    svc_clf.fit(features_train, y_train)
+
+    y_pred = svc_clf.predict(features_test)
+    df = pd.DataFrame({'target': y_pred})
+    df.to_csv('results.csv', index=False)
+
 ## Read datasets
-tweet_df = pd.read_csv('../dataset/train_processed_lem.csv')
-test_df = pd.read_csv('../dataset/test.csv')
+tweet_df = pd.read_csv('../dataset/train_dropduplicates.csv')
+test_df = pd.read_csv('../dataset/test_processed.csv')
 print("Number of tweets, features:", tweet_df.shape)
 print("Number of test, features:", test_df.shape)
+predict_results(tweet_df, test_df)
+#execute(tweet_df, bert=True, doc2vec=True, tfidf=True, bow=True)
 
-execute(tweet_df, bert=True, doc2vec=True, tfidf=True, bow=True)
+print("End execution")
