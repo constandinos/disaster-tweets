@@ -1,7 +1,15 @@
+# Use tensorflow for GPU !!!
+# To install the current release of GPU TensorFlow
+# conda create -n tf-gpu tensorflow-gpu
+# conda activate tf-gpu
+# conda install --name tf-gpu pylint -y
 # To install the current release of CPU-only TensorFlow
 # conda create -n tf tensorflow
 # conda activate tf
+# conda install --name tf pylint -y
 import tensorflow as tf
+# Uncomment to check if tensorflow is using your GPU
+#tf.debugging.set_log_device_placement(True)
 from tensorflow.keras.layers import Dense, Input
 from tensorflow.keras.optimizers import Adamax
 from tensorflow.keras.models import Model
@@ -19,7 +27,7 @@ import tensorflow_hub as hub
 # conda install -c powerai sentencepiece
 import tokenization
 
-# conda install --name tf pylint -y
+
 
 # To install this package with conda run:
 # conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
@@ -42,15 +50,15 @@ from sklearn.model_selection import cross_val_score
 
 
 
-
 class DisasterDetector:
     
-    def __init__(self, bert_layer, lr=0.001, epochs=10, batch_size=32):
+    def __init__(self, bert_layer, lr=0.00001, epochs=5, batch_size=32):
         
         # BERT and Tokenization params
         self.bert_layer = bert_layer
         
         vocab_file = self.bert_layer.resolved_object.vocab_file.asset_path.numpy()
+        print(vocab_file)
         do_lower_case = self.bert_layer.resolved_object.do_lower_case.numpy()
         self.tokenizer = tokenization.FullTokenizer(vocab_file, do_lower_case)
         
@@ -157,11 +165,11 @@ class DisasterDetector:
         ## Running BERT model - feature creation
         padded_tokens_torch = torch.tensor(padded_tokens, dtype=torch.int64)  
         bert_mask_torch = torch.tensor(bert_mask)
-        
+
         with torch.no_grad():
             hidden_states = bert_model(input_ids = padded_tokens_torch, \
                                         attention_mask = bert_mask_torch)
-        
+
         features = hidden_states[0][:,0,:].numpy()
 
         return features
@@ -169,6 +177,7 @@ class DisasterDetector:
 
     def create_model(self):
         """
+        This model is used with the tokens method.
         Build a binary classification NN model
         Use sigmoid activation function
         output in {0,1}
@@ -212,14 +221,15 @@ class DisasterDetector:
 
     def create_model2(self):
         """
+        This model is used with the features method.
         Build a binary classification NN model
         Use sigmoid activation function
         output in {0,1}
         Loss function : Binary crossentropy
         """
         # Instantiate Keras tensors.
-        input_ids = Input(shape=(768,), dtype=tf.int32)
-  
+        input_ids = Input(shape=(768,), dtype=tf.float32)
+
         out = Dense(1, activation='sigmoid')(input_ids)
 
         model = Model(inputs=input_ids, outputs=out)
@@ -233,6 +243,7 @@ class DisasterDetector:
         """
         Train the nn model with the given X and its labels Y.
         """
+        X = [str(x) for x in X]
         if (tokens):
             X_encoded = self.encode(X)
         else:
@@ -240,10 +251,12 @@ class DisasterDetector:
         Y = np.array(Y)
 
         if (tokens):
-            self.nn_model = self.create_model().fit(X_encoded, Y, epochs=self.epochs, batch_size=self.batch_size)
+            self.nn_model = self.create_model()
+            self.nn_model.fit(X_encoded, Y, epochs=self.epochs, batch_size=self.batch_size)
             self.method = 0
         else:
-            self.nn_model = self.create_model2().fit(X_encoded, Y, epochs=self.epochs, batch_size=self.batch_size)
+            self.nn_model = self.create_model2()
+            self.nn_model.fit(X_encoded, Y, epochs=self.epochs, batch_size=self.batch_size)
             self.method = 1
 
 
@@ -253,6 +266,7 @@ class DisasterDetector:
 
         Works only with features method not the tokens one.
         """
+        X = [str(x) for x in X]
         X_encoded = self.bert_feature_creation(X)
         Y = np.array(Y)
 
@@ -275,6 +289,7 @@ class DisasterDetector:
         It will apply  the same method (tokens or features) as the train did
         the last time it was called.
         """
+        X = [str(x) for x in X]
         if self.method is None:
             return np.zeros((len(X), 1))
 
@@ -286,11 +301,16 @@ class DisasterDetector:
         y_pred = np.zeros((len(X), 1))
 
         y_pred = self.nn_model.predict(X_encoded)
-
+        y_pred = y_pred.round().astype(int)
         return y_pred
     
 
     def load_model(self, tokens, file):
+        """
+        Load a nn model.
+
+        If it is a token method model then pass True to the argument tokens.
+        """
         if (tokens == True):
             self.nn_model = load_model(file)
             self.method = 0
@@ -299,30 +319,33 @@ class DisasterDetector:
             self.method = 1
 
     def save_model(self,file):
+        """
+        Save the current model.
+        """
         if self.method is None:
             return
         else:
             name = file+'.h5'
             self.nn_model.save(name)
 
+
 # Load Bert
 # Wraps a SavedModel (or a legacy Hub.Module) as a Keras Layer.
 bert_layer = hub.KerasLayer('https://tfhub.dev/tensorflow/bert_en_uncased_L-12_H-768_A-12/1', trainable=True)
 
-clf = DisasterDetector(bert_layer, lr=0.001, epochs=10, batch_size=32)
+clf = DisasterDetector(bert_layer, lr=0.00001, epochs=5, batch_size=32)
 
 
-df_train = pd.read_csv('../dataset/train_processed_lem.csv')
-df_test = pd.read_csv('../dataset/test.csv')
+df_train = pd.read_csv('../dataset/train_dropduplicates.csv')
+df_test = pd.read_csv('../dataset/test_processed.csv')
 print("Number of tweets, features:",df_train.shape)
 print("Number of test, features:",df_test.shape)
 
-clf.cross_validation(list(df_train['text']),list(df_train['target']))
+#clf.cross_validation(list(df_train['text']),list(df_train['target']))
 
 
-#clf.train(list(df_train['text']),list(df_train['target']), tokens=True)
-#y_pred = clf.predict(df_test)
-#df = pd.DataFrame(y_pred)
-#df.to_csv('letssee', sep='\t', encoding='utf-8')
-
+clf.train([str(x) for x in list(df_train['processed_lem'])],list(df_train['target']), tokens=True)
+y_pred = clf.predict([str(x) for x in list(df_test['processed_lem'])])
+df = pd.DataFrame(y_pred)
+df.to_csv('tokenspr.csv', sep='\t', encoding='utf-8')
 
