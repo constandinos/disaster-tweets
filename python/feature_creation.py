@@ -464,7 +464,7 @@ def grid_search_cross_validation(clf_list, x_train, y_train, k_folds=10, score_t
 import matplotlib.pyplot as plt
 
 
-def plot_graphs(title_name, labels, f1_score, std):
+def plot_graphs(title_name, column_name, labels, f1_score, std):
     """
     This function will plot the results of cross validation for each machine
     learning algorithm
@@ -489,7 +489,7 @@ def plot_graphs(title_name, labels, f1_score, std):
     axes[1].bar(labels, std, color='tab:orange')
     axes[1].set_ylabel('Standard Deviation')
     fig.suptitle(title_name)
-    fig.savefig(title_name + '.png')
+    fig.savefig(column_name + title_name + '.png')
     plt.show()
     plt.close(fig)
 
@@ -518,9 +518,6 @@ def reports(features, labels, model, pca):
 
 
 def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
-    docs = list(df['processed_text_deep_without_url'])
-    labels = df['target']
-
     clf_list = [("logistic_regression", LogisticRegression(), {'C': np.logspace(-4, 4, 20),\
                                                                'max_iter': [100, 200, 300, 400, 500]}),
                 ("k-nn", KNeighborsClassifier(), {'n_neighbors': np.arange(1, 25),  \
@@ -535,48 +532,58 @@ def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
                 ("svc", SVC(), {'C': [0.1, 1, 10, 100], \
                                 'gamma': [0.01, 0.1, 1],\
                                 'kernel': ['rbf', 'linear', 'sigmoid']})]
-    
-    if (bert):
-        print("Running bert...")
-        features = bert_feature_creation(docs)
-        print("Features created")
-        #reports(features, labels, 'BERT',pca=True)
-        model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
-        plot_graphs('BERT', model_names, model_scores, model_std)
-        print("----------------------------------------------------\n")
-    
-    if (doc2vec):
-        print("Running doc2vec...")
-        model = train_doc2vec_model(docs)
-        features = doc2vec_feature_creation(model, docs)
-        print("Features created")
-        reports(features, labels, 'DOC2VEC',pca=True)
-        model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
-        plot_graphs('DOC2VEC', model_names, model_scores, model_std)
-        print("----------------------------------------------------\n")
 
-    if (tfidf):
-        print("Running tfidf...")
-        features, _ = train_vectorizer(docs, tf_idf=True)
-        print("Features created")
-        reports(features, labels, 'TFIDF',pca=False)
-        model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
-        plot_graphs('TFIDF', model_names, model_scores, model_std)
-        print("----------------------------------------------------\n")
+    column_list = ['text', 'processed_lem', 'processed_stem', 'processed_lem_key', 'processed_stem_key', \
+                   'processed_text_deep_without_url', 'processed_text_deep_without_url_key']
 
-    if (bow):
-        print("Running bow...")
-        features, _ = train_vectorizer(docs, tf_idf=False)
-        print("Features created")
-        reports(features, labels, 'Bag of words',pca=False)
-        model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
-        plot_graphs('Bag of words', model_names, model_scores, model_std)
-        print("----------------------------------------------------\n")
+    for column in column_list:
+        print("*** Column is "+column)
+        docs = list(df[column])
+        labels = df['target']
+
+        if (bert):
+            print("Running bert...")
+            features = bert_feature_creation(docs)
+            print("Features created")
+            reports(features, labels, 'BERT',pca=True)
+            model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
+            plot_graphs('BERT', column, model_names, model_scores, model_std)
+            print("----------------------------------------------------\n")
+
+        if (doc2vec):
+            print("Running doc2vec...")
+            model = train_doc2vec_model(docs)
+            features = doc2vec_feature_creation(model, docs)
+            print("Features created")
+            reports(features, labels, 'DOC2VEC',pca=True)
+            model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
+            plot_graphs('DOC2VEC', column, model_names, model_scores, model_std)
+            print("----------------------------------------------------\n")
+
+        if (tfidf):
+            print("Running tfidf...")
+            features, _ = train_vectorizer(docs, tf_idf=True)
+            print("Features created")
+            reports(features, labels, 'TFIDF',pca=False)
+            model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
+            plot_graphs('TFIDF', column, model_names, model_scores, model_std)
+            print("----------------------------------------------------\n")
+
+        if (bow):
+            print("Running bow...")
+            features, _ = train_vectorizer(docs, tf_idf=False)
+            print("Features created")
+            reports(features, labels, 'Bag of words',pca=False)
+            model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
+            plot_graphs('Bag of words', column, model_names, model_scores, model_std)
+            print("----------------------------------------------------\n")
+
+        print("****************************************************\n")
 
 def predict_results(train_df, test_df):
-    x_train = list(train_df['processed_text_deep_without_url'])
+    x_train = list(train_df['processed_lem_key'])
     y_train = train_df['target']
-    x_test = list(test_df['processed_text_deep_without_url'])
+    x_test = list(test_df['processed_lem_key'])
 
     features_train = bert_feature_creation(x_train)
     features_test = bert_feature_creation(x_test)
@@ -585,15 +592,16 @@ def predict_results(train_df, test_df):
     svc_clf.fit(features_train, y_train)
 
     y_pred = svc_clf.predict(features_test)
-    df = pd.DataFrame({'target': y_pred})
-    df.to_csv('results.csv', index=False)
+    submission = pd.read_csv("dataset/sample_submission.csv")
+    submission['target'] = y_pred
+    submission.to_csv('submission.csv', index=False)
 
 ## Read datasets
 tweet_df = pd.read_csv('dataset/train_dropduplicates.csv')
 test_df = pd.read_csv('dataset/test_processed.csv')
 print("Number of tweets, features:", tweet_df.shape)
 print("Number of test, features:", test_df.shape)
+execute(tweet_df, bert=True, doc2vec=True, tfidf=True, bow=True)
 predict_results(tweet_df, test_df)
-#execute(tweet_df, bert=True, doc2vec=False, tfidf=False, bow=False)
 
 print("End execution")
