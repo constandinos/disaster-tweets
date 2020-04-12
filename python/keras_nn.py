@@ -8,12 +8,14 @@
 # conda activate tf
 # conda install --name tf pylint -y
 import tensorflow as tf
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
 # Uncomment to check if tensorflow is using your GPU
 #tf.debugging.set_log_device_placement(True)
 from tensorflow.keras.layers import Dense, Input
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.models import Model
-from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
+from tensorflow.keras.wrappers.scikit_learn import KerasRegressor
 from tensorflow.keras.models import load_model
 from tensorflow.keras.utils import plot_model
 from tensorflow.keras.metrics import Recall
@@ -26,7 +28,7 @@ from tensorflow.keras.metrics import Precision
 import tensorflow_hub as hub
 # Official tokenization script created by the Google team:
 # https://raw.githubusercontent.com/tensorflow/models/master/official/nlp/bert/tokenization.py
-# To install this package with conda run:
+# To install this package with conda run: (only for Linux :/)
 # conda install -c powerai sentencepiece
 import tokenization
 
@@ -40,7 +42,6 @@ import pandas as pd
 # conda install -c anaconda scikit-learn
 from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import cross_val_score
-
 
 
 # =============================================================================#
@@ -209,6 +210,43 @@ class DisasterClassifier:
         name = file+'.h5'
         self.nn_model.save(name)
 
+
+    def cross_validation(self, X, Y):
+        """
+        Cross validation with sklearn stratified kfolds.
+        """
+        X = [str(x) for x in X]
+        Y = np.array(Y)
+
+        kfold = StratifiedKFold(n_splits=10, shuffle=True)
+        cv_scores = []
+
+        X_ids, X_mask, X_segments = self.encode(X)
+        X = np.array(X)
+
+        i = 1
+        for train_idx, test_idx in kfold.split(X,Y):
+            model = self.create_model()
+            print(len(train_idx),len(test_idx))
+            X_encoded_train = (X_ids[train_idx],X_mask[train_idx],X_segments[train_idx])
+            X_encoded_test = (X_ids[test_idx],X_mask[test_idx],X_segments[test_idx])
+
+            # Fit the model with this fold's train data
+            model.fit(X_encoded_train, Y[train_idx], epochs=1, batch_size=self.batch_size, verbose=0)
+
+            # Evaluate model with this fold's test data
+            scores = model.evaluate(X_encoded_test, Y[test_idx], verbose=0)
+
+            precision = scores[2]
+            recall = scores[3]
+            f1_score = 2*((precision*recall)/(precision+recall))
+            print('Fold %d: Precision - %.2f%%  Recall - %.2f%%  F1-score - %.2f%%' % (i, precision*100, recall*100, f1_score*100))
+            cv_scores.append(f1_score * 100)
+            i+=1
+
+        print('Average f1-score: %.2f%%(+/- %.2f%%)' % (np.mean(cv_scores),np.std(cv_scores)))
+
+
 # =============================================================================#
 #                         End of Disaster Classifier                           #
 # =============================================================================#
@@ -223,9 +261,13 @@ df_test = pd.read_csv('dataset/test_processed.csv')
 print("Number of tweets, features:",df_train.shape)
 print("Number of test, features:",df_test.shape)
 
-clf.train([str(x) for x in list(df_train['processed_lem'])],
+clf.cross_validation([str(x) for x in list(df_train['processed_text_deep_without_url'])],
                                 list(df_train['target']))
-y_pred = clf.predict([str(x) for x in list(df_test['processed_lem'])])
+"""
+clf.train([str(x) for x in list(df_train['processed_text_deep_without_url'])],
+                                list(df_train['target']))
+y_pred = clf.predict([str(x) for x in list(df_test['processed_text_deep_without_url'])])
 submission = pd.read_csv("dataset/sample_submission.csv")
 submission['target'] = y_pred
 submission.to_csv('submission.csv', index=False)
+"""
