@@ -3593,7 +3593,7 @@ kkk	ku klux klan
 kkthnxbye	okay thanks bye
 kky	kinky
 kl	cool
-km	kiss me
+km	kilometers
 kma	kiss my ass
 kmag	kiss my ass goodbye
 kmao	kick my ass off
@@ -6870,6 +6870,7 @@ usu	usually
 usuk	You Suck
 usux	you suck
 ut	unreal tournament
+utc	coordinated universal time
 utfs	Use the fucking search
 utfse	use the fucking search engine
 utilit	utilitarian
