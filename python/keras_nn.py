@@ -8,8 +8,6 @@
 # conda activate tf
 # conda install --name tf pylint -y
 import tensorflow as tf
-tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
-
 # Uncomment to check if tensorflow is using your GPU
 #tf.debugging.set_log_device_placement(True)
 from tensorflow.keras.layers import Dense, Input
@@ -41,8 +39,10 @@ import pandas as pd
 # To install this package with conda run:
 # conda install -c anaconda scikit-learn
 from sklearn.model_selection import StratifiedKFold
-from sklearn.model_selection import cross_val_score
 
+# To install this package with conda run one of the following:
+# conda install -c conda-forge matplotlib
+import matplotlib.pyplot as plt
 
 # =============================================================================#
 #                              Disaster Classifier                             #
@@ -50,7 +50,7 @@ from sklearn.model_selection import cross_val_score
 
 class DisasterClassifier:
     
-    def __init__(self, bert_layer = None, lr=0.00001, epochs=4, batch_size=32):
+    def __init__(self, bert_layer = None, lr=0.000001, epochs=4, batch_size=32):
         # Load Bert
         # Wraps a SavedModel (or a legacy Hub.Module) as a Keras Layer.
         if bert_layer is None:
@@ -68,7 +68,37 @@ class DisasterClassifier:
         self.lr = lr
         self.epochs = epochs
         self.batch_size = batch_size
-        self.nn_model = None
+
+        # Create model
+        # Instantiate Keras tensors.
+        input_word_ids = Input(shape=(None,), dtype=tf.int32, 
+                               name="input_word_ids")
+        input_mask = Input(shape=(None,), dtype=tf.int32, name="input_mask")
+        segment_ids = Input(shape=(None,), dtype=tf.int32, name="segment_ids")
+
+        _, sequence_output = self.bert_layer([input_word_ids, input_mask, 
+                                             segment_ids])
+        # We get only the first element [CLS] because bert adds this 
+        # classification token at the first element of each sentence.
+        cls_output = sequence_output[:, 0, :]
+        
+
+        # Connect the previous layer with a Dense layer with only one node.
+        # This layer will be the output layer.
+        out = Dense(1, activation='sigmoid')(cls_output)
+        # Build our model
+        self.nn_model = Model(inputs=[input_word_ids, input_mask, segment_ids], 
+                      outputs=out)
+        # Choose an optimizer to adjust weights.
+        optimizer = Adam(learning_rate=self.lr)
+        # Compile our model.
+        self.nn_model.compile(optimizer=optimizer, loss='binary_crossentropy', 
+                                metrics=['accuracy',Precision(),Recall()])
+        
+        # Binary Cross-Entropy Loss is intended for use with binary 
+        # classification where the target values are in the set {0, 1}.
+        # The function requires that the output layer is configured with a 
+        # single node and a ‘sigmoid‘ activation, as in our case.
         
         
     def encode(self, texts):
@@ -111,45 +141,6 @@ class DisasterClassifier:
         return padded_tokens, bert_masks, bert_segments
 
 
-    def create_model(self):
-        """
-        Build a binary classification NN model
-        Use sigmoid activation function
-        output in {0,1}
-        Loss function : Binary crossentropy
-        """
-        # Instantiate Keras tensors.
-        input_word_ids = Input(shape=(None,), dtype=tf.int32, 
-                               name="input_word_ids")
-        input_mask = Input(shape=(None,), dtype=tf.int32, name="input_mask")
-        segment_ids = Input(shape=(None,), dtype=tf.int32, name="segment_ids")
-
-        _, sequence_output = self.bert_layer([input_word_ids, input_mask, 
-                                             segment_ids])
-        # We get only the first element [CLS] because bert adds this 
-        # classification token at the first element of each sentence.
-        cls_output = sequence_output[:, 0, :]
-        
-
-        # Connect the previous layer with a Dense layer with only one node.
-        # This layer will be the output layer.
-        out = Dense(1, activation='sigmoid')(cls_output)
-        # Build our model
-        model = Model(inputs=[input_word_ids, input_mask, segment_ids], 
-                      outputs=out)
-        # Choose an optimizer to adjust weights.
-        optimizer = Adam(learning_rate=self.lr)
-        # Compile our model.
-        model.compile(optimizer=optimizer, loss='binary_crossentropy', 
-                      metrics=['accuracy',Precision(),Recall()])
-        
-        # Binary Cross-Entropy Loss is intended for use with binary 
-        # classification where the target values are in the set {0, 1}.
-        # The function requires that the output layer is configured with a 
-        # single node and a ‘sigmoid‘ activation, as in our case.
-        return model
-
-
     def train(self, X, Y):
         """
         Train the nn model with the given X and its labels Y.
@@ -160,7 +151,6 @@ class DisasterClassifier:
 
         X_encoded = self.encode(X)
 
-        self.nn_model = self.create_model()
         self.nn_model.fit(X_encoded, np.array(Y), epochs=self.epochs, 
                           batch_size=self.batch_size)
 
@@ -172,8 +162,8 @@ class DisasterClassifier:
         You have to train the model at least once otherwise it will classify
         everything in the class 0.
         """
-        if self.nn_model is None:
-            return np.zeros((len(X), 1))
+        #if self.nn_model is None:
+        #    return np.zeros((len(X), 1))
 
         X = [str(x) for x in X]
 
@@ -186,8 +176,8 @@ class DisasterClassifier:
         return y_pred
     
     def get_model_summary(self):
-        if self.nn_model is None:
-            return
+        #if self.nn_model is None:
+        #    return
         
         # summarize the model
         self.nn_model.summary()
@@ -209,12 +199,28 @@ class DisasterClassifier:
         """
         name = file+'.h5'
         self.nn_model.save(name)
+    
+    
+    def plot_learning_curves(self, X, Y):
+        X = [str(x) for x in X]
+        Y = np.array(Y)
+        X_encoded = self.encode(X)
 
-
+        history = self.nn_model.fit(X_encoded,Y,epochs=self.epochs*2,batch_size=self.batch_size,validation_split=0.2)
+        # plot learning curves
+        plt.title('Learning Curves')
+        plt.xlabel('Epoch')
+        plt.ylabel('Binary Cross Entropy')
+        plt.plot(history.history['loss'], label='train')
+        plt.plot(history.history['val_loss'], label='val')
+        plt.legend()
+        plt.show()
+    
+    """
     def cross_validation(self, X, Y):
-        """
-        Cross validation with sklearn stratified kfolds.
-        """
+        
+        #Cross validation with sklearn stratified kfolds.
+        
         X = [str(x) for x in X]
         Y = np.array(Y)
 
@@ -245,7 +251,7 @@ class DisasterClassifier:
             i+=1
 
         print('Average f1-score: %.2f%%(+/- %.2f%%)' % (np.mean(cv_scores),np.std(cv_scores)))
-
+    """
 
 # =============================================================================#
 #                         End of Disaster Classifier                           #
@@ -253,19 +259,23 @@ class DisasterClassifier:
 
 
 
-clf = DisasterClassifier(lr=0.00001, epochs=4, batch_size=32)
-
-
 df_train = pd.read_csv('dataset/train_dropduplicates.csv')
 df_test = pd.read_csv('dataset/test_processed.csv')
 print("Number of tweets, features:",df_train.shape)
 print("Number of test, features:",df_test.shape)
 
-clf.cross_validation([str(x) for x in list(df_train['processed_text_deep_without_url'])],
+clf = DisasterClassifier(lr=0.000001, epochs=4, batch_size=8)
+
+
+#clf.cross_validation([str(x) for x in list(df_train['processed_text_deep_without_url'])],
+#                                list(df_train['target']))
+
+clf.plot_learning_curves([str(x) for x in list(df_train['processed_text_deep_without_url'])],
                                 list(df_train['target']))
+
 """
 clf.train([str(x) for x in list(df_train['processed_text_deep_without_url'])],
-                                list(df_train['target']))
+                                list(df_train['target']))                                                               
 y_pred = clf.predict([str(x) for x in list(df_test['processed_text_deep_without_url'])])
 submission = pd.read_csv("dataset/sample_submission.csv")
 submission['target'] = y_pred
