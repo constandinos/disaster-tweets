@@ -1,7 +1,7 @@
 import pandas as pd
 
 df = pd.read_csv('../dataset/train_processed.csv')
-group = df.groupby('processed_lem')['id'].unique()
+group = df.groupby('processed')['id'].unique()
 
 drop_id = []
 count_different_target = 0 # number of tuples, its elements have different target value
@@ -29,8 +29,8 @@ for key, items in group.items():
         drop_id += items[1:].tolist() # id to be dropped
         df.loc[items[0], 'target'] = newtarget # set the target of the record left
 
-print("number of tubles: {}".format(count_tuples)) #355
-print("number of tubles with different target: {}".format(count_different_target)) #87
+print("number of tubles: {}".format(count_tuples)) #354
+print("number of tubles with different target: {}".format(count_different_target)) #85
 
 # drop duplicates
 df.drop(drop_id , inplace=True)
