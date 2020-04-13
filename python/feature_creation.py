@@ -264,7 +264,7 @@ def train_vectorizer(docs, tf_idf=True, analyzer='word', \
     train_data = [str(x) for x in docs]
     if (tf_idf):
         # initialize tf-idf vectorizer
-        vectorizer = TfidfVectorizer(analyzer='word', \
+        vectorizer = TfidfVectorizer(analyzer=analyzer, \
                                      max_df=max_df, \
                                      min_df=min_df, \
                                      ngram_range=ngram_range, \
@@ -436,18 +436,18 @@ def grid_search_cross_validation(clf_list, x_train, y_train, k_folds=10, score_t
    """
 
     model_names, model_scores, model_std = [], [], []  # return list
-
+    kfold = model_selection.KFold(n_splits=k_folds, shuffle=True)
+    #kfold = model_selection.StratifiedKFold(n_splits=k_folds, shuffle=True)
     for name, model, parameters in clf_list:
         # grid search
         print("Grid search for " + name)
-        search = GridSearchCV(model, parameters, scoring=score_type, cv=k_folds, n_jobs=-1)
+        search = GridSearchCV(model, parameters, scoring=score_type, cv=kfold, n_jobs=-1)
         search.fit(x_train, y_train)
         print("Best parameters: " + str(search.best_params_))
         best_est = search.best_estimator_  # estimator with the best parameters
+        
         # k-fold cross validation
         print("Start cross validation...")
-        kfold = model_selection.KFold(n_splits=k_folds, shuffle=True)
-        #kfold = model_selection.StratifiedKFold(n_splits=k_folds, shuffle=True)
         f1_score = model_selection.cross_val_score(best_est, x_train, y_train, cv=kfold, scoring=score_type, n_jobs=-1)
         # append results to the return lists
         model_names.append(name)
