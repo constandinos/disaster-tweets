@@ -239,11 +239,14 @@ def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
 def predict_results(train_df, test_df,text_col):
     x_train = list(train_df[text_col])
     y_train = train_df['target']
-    x_test = list(test_df[text_col])
+    x_test = list([str(x) for x in test_df[text_col]])
 
-    features_train = fc.bert_feature_creation(x_train)
-    features_test = fc.bert_feature_creation(x_test)
+    
+    #features_train = fc.bert_feature_creation(x_train)
+    #features_test = fc.bert_feature_creation(x_test)
 
+    features_train, vectorizer = fc.train_vectorizer(x_train)
+    features_test = vectorizer.transform(x_test)
     
     svc_clf = SVC(C=10, gamma=0.01, kernel='rbf')
     cross_validation(svc_clf, features_train, y_train)
@@ -263,6 +266,6 @@ if __name__ == "__main__":
     print("Number of tweets, features:", tweet_df.shape)
     print("Number of test, features:", test_df.shape)
     #execute(tweet_df, bert=True, doc2vec=False, tfidf=False, bow=False)
-    predict_results(tweet_df, test_df,'processed')
+    predict_results(tweet_df, test_df,'lemmatization')
 
     print("End execution")
