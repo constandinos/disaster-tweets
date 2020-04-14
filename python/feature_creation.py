@@ -447,15 +447,56 @@ def grid_search_cross_validation(clf_list, x_train, y_train, k_folds=10, score_t
         best_est = search.best_estimator_  # estimator with the best parameters
         
         # k-fold cross validation
-        print("Start cross validation...")
-        f1_score = model_selection.cross_val_score(best_est, x_train, y_train, cv=kfold, scoring=score_type, n_jobs=-1)
+        f1_mean, f1_std = cross_validation(best_est, x_train, y_train, k_folds, score_type)
         # append results to the return lists
         model_names.append(name)
-        model_scores.append(f1_score.mean())
-        model_std.append(f1_score.std())
-        print("End cross validation, f1_macro="+str(f1_score.mean())+"\n")
+        model_scores.append(f1_mean)
+        model_std.append(f1_std)
 
     return model_names, model_scores, model_std
+
+
+def cross_validation(estimator, x_train, y_train, k_folds=10, score_type='f1_macro'):
+    """
+	This function will apply k-folds cross validation to calculate the average
+	f1_macro score in order to select the machine learning algorithm with highest
+	score.
+
+	Parameters
+	----------
+	clf_list: list of estimators
+		Estimator (ml or nn) algorithm
+	x_train: numpy array
+		The train data
+	y_train: numpy array
+		The labels of train data
+	k_folds: integer
+		The number of folds
+	score_type: string
+		The name of score type
+
+	Returns
+	-------
+	estimator_score: list of floats
+		This list contains the best cross validation f1 scores of machine learning
+		algorithms
+	estimator_std: list of floats
+		This list contains the cross validation standard deviations of machine learning
+		algorithms
+   """
+
+    estimator_score, estimator_std = None, None  # return results
+    kfold = model_selection.KFold(n_splits=k_folds, shuffle=True)
+    
+    # k-fold cross validation
+    print("Start cross validation...")
+    f1_score = model_selection.cross_val_score(estimator, x_train, y_train, cv=kfold, scoring=score_type, n_jobs=-1)
+    # append results to the return lists
+    estimator_score = f1_score.mean()
+    estimator_std = f1_score.std()
+    print("End cross validation, "+score_type+"="+str(f1_score.mean())+"\n")
+
+    return estimator_score, estimator_std
 
 
 # ==============================================================================#
@@ -501,7 +542,7 @@ def plot_graphs(title_name, column_name, labels, f1_score, std):
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 
-
+"""
 def reports(features, labels, model, pca):
     print('Reports for', model)
     train_features, test_features, train_labels, test_labels = \
@@ -515,7 +556,7 @@ def reports(features, labels, model, pca):
 
     print("Linear Regression Classifier:")
     print(classification_report(test_labels, y_pred))
-
+"""
 
 def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
     clf_list = [("logistic_regression", LogisticRegression(), {'C': np.logspace(-4, 4, 20),\
@@ -545,7 +586,7 @@ def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
             print("Running bert...")
             features = bert_feature_creation(docs)
             print("Features created")
-            reports(features, labels, 'BERT',pca=True)
+            #reports(features, labels, 'BERT',pca=True)
             model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
             plot_graphs('BERT', column, model_names, model_scores, model_std)
             print("----------------------------------------------------\n")
@@ -555,7 +596,7 @@ def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
             model = train_doc2vec_model(docs)
             features = doc2vec_feature_creation(model, docs)
             print("Features created")
-            reports(features, labels, 'DOC2VEC',pca=True)
+            #reports(features, labels, 'DOC2VEC',pca=True)
             model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
             plot_graphs('DOC2VEC', column, model_names, model_scores, model_std)
             print("----------------------------------------------------\n")
@@ -564,7 +605,7 @@ def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
             print("Running tfidf...")
             features, _ = train_vectorizer(docs, tf_idf=True)
             print("Features created")
-            reports(features, labels, 'TFIDF',pca=False)
+            #reports(features, labels, 'TFIDF',pca=False)
             model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
             plot_graphs('TFIDF', column, model_names, model_scores, model_std)
             print("----------------------------------------------------\n")
@@ -573,22 +614,24 @@ def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
             print("Running bow...")
             features, _ = train_vectorizer(docs, tf_idf=False)
             print("Features created")
-            reports(features, labels, 'Bag of words',pca=False)
+            #reports(features, labels, 'Bag of words',pca=False)
             model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
             plot_graphs('Bag of words', column, model_names, model_scores, model_std)
             print("----------------------------------------------------\n")
 
         print("****************************************************\n")
 
-def predict_results(train_df, test_df):
-    x_train = list(train_df['processed_lem_key'])
+def predict_results(train_df, test_df,text_col):
+    x_train = list(train_df[text_col])
     y_train = train_df['target']
-    x_test = list(test_df['processed_lem_key'])
+    x_test = list(test_df[text_col])
 
     features_train = bert_feature_creation(x_train)
     features_test = bert_feature_creation(x_test)
 
+    
     svc_clf = SVC(C=10, gamma=0.01, kernel='rbf')
+    cross_validation(svc_clf, features_train, y_train)
     svc_clf.fit(features_train, y_train)
 
     y_pred = svc_clf.predict(features_test)
@@ -601,7 +644,7 @@ tweet_df = pd.read_csv('dataset/train_dropduplicates.csv')
 test_df = pd.read_csv('dataset/test_processed.csv')
 print("Number of tweets, features:", tweet_df.shape)
 print("Number of test, features:", test_df.shape)
-execute(tweet_df, bert=True, doc2vec=False, tfidf=False, bow=False)
-#predict_results(tweet_df, test_df)
+#execute(tweet_df, bert=True, doc2vec=False, tfidf=False, bow=False)
+predict_results(tweet_df, test_df,'processed')
 
 print("End execution")
