@@ -2,11 +2,14 @@ import numpy as np
 import pandas as pd
 import time
 
-from IPython.display import display
 
-# ==============================================================================#
+# =============================================================================#
+#                              FEATURE CREATION                                #
+# =============================================================================#
+
+# =============================================================================#
 #                              DistilBert / Bert                               #
-# ==============================================================================#
+# =============================================================================#
 
 # To install this package with conda run:
 # conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
@@ -287,9 +290,20 @@ def train_vectorizer(docs, tf_idf=True, analyzer='word', \
     return features, vectorizer
 
 
-# ==============================================================================#
+# =============================================================================#
+# =============================================================================#
+
+
+
+# =============================================================================#
+#                             FEATURE EXTRACTION                               #
+# =============================================================================#
+
+from IPython.display import display
+
+# =============================================================================#
 #                Dimensionality Reduction (PCA/TruncatedSVD)                   #
-# ==============================================================================#
+# =============================================================================#
 
 from sklearn.decomposition import PCA
 from sklearn.decomposition import TruncatedSVD
@@ -308,7 +322,7 @@ def reduction_components_evaluation_report(features, max_components=200, \
     features : numpy array
         Features to which dimensionality reduction will be applied.
     max_components: int (default 200)
-        Determines the number of components that we wont on our report
+        Determines the number of components that we want on our report
     pca : bool (default True)
         Determines the dimensionality reduction algorithm. True means PCA
         otherwise TruncatedSVD.
@@ -325,6 +339,11 @@ def reduction_components_evaluation_report(features, max_components=200, \
 
     model_results_df = pd.DataFrame(0, index=dimensions_to_test, \
                                     columns=columns)
+
+    if (pca):
+        print("PCA feature extraction report:")
+    else:
+        print("TSVD feature extraction report:")
 
     for k in dimensions_to_test:
         print("Handling num dimensions = ", k)
@@ -383,172 +402,119 @@ def dimensionality_reduction(n_components, train_features, test_features, \
     train_features_reduced = model.transform(train_features)
     test_features_reduced = model.transform(test_features)
 
+    variance = np.sum(model.explained_variance_ratio_)
+    print('Variance explained with '+n_components+' components: '+ variance)
+
     return train_features_reduced, test_features_reduced
 
 
-# ==============================================================================#
+# =============================================================================#
+#                 Dimensionality Reduction (LDA) - Supervised                  #
+# =============================================================================#
 
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
-# ==============================================================================#
-#                     Grid Search and Cross Validation                         #
-# ==============================================================================#
-from sklearn.model_selection import GridSearchCV
-from sklearn import model_selection
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.neural_network import MLPClassifier
-from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
-
-
-def grid_search_cross_validation(clf_list, x_train, y_train, k_folds=10, score_type='f1_macro'):
+def reduction_components_evaluation_report_lda(features, labels, max_components=200):
     """
-	This function will apply grid search to search over specified parameter values
-	for an estimator to find the optimal parameters for a machine learning algorithm.
-	Also, this function will apply k-folds cross validation to calculate the average
-	f1_macro score in order to select the machine learning algorithm with highest
-	score.
-
-	Parameters
-	----------
-	clf_list: list of tuples with name of
-		Each tuple contains the name of machine learning algorithm, the initialization
-		estimator and a set with the parameters
-	x_train: numpy array
-		The train data
-	y_train: numpy array
-		The labels of train data
-	k_folds: integer
-		The number of folds
-	score_type: string
-		The name of score type
-
-	Returns
-	-------
-	model_names: list of strings
-		This list contains the names of machine learning algorithms
-	model_scores: list of floats
-		This list contains the best cross validation f1 scores of machine learning
-		algorithms
-	model_std: list of floats
-		This list contains the cross validation standard deviations of machine learning
-		algorithms
-   """
-
-    model_names, model_scores, model_std = [], [], []  # return list
-    kfold = model_selection.KFold(n_splits=k_folds, shuffle=True)
-    #kfold = model_selection.StratifiedKFold(n_splits=k_folds, shuffle=True)
-    for name, model, parameters in clf_list:
-        # grid search
-        print("Grid search for " + name)
-        search = GridSearchCV(model, parameters, scoring=score_type, cv=kfold, n_jobs=-1)
-        search.fit(x_train, y_train)
-        print("Best parameters: " + str(search.best_params_))
-        best_est = search.best_estimator_  # estimator with the best parameters
-        
-        # k-fold cross validation
-        f1_mean, f1_std = cross_validation(best_est, x_train, y_train, k_folds, score_type)
-        # append results to the return lists
-        model_names.append(name)
-        model_scores.append(f1_mean)
-        model_std.append(f1_std)
-
-    return model_names, model_scores, model_std
-
-
-def cross_validation(estimator, x_train, y_train, k_folds=10, score_type='f1_macro'):
-    """
-	This function will apply k-folds cross validation to calculate the average
-	f1_macro score in order to select the machine learning algorithm with highest
-	score.
-
-	Parameters
-	----------
-	clf_list: list of estimators
-		Estimator (ml or nn) algorithm
-	x_train: numpy array
-		The train data
-	y_train: numpy array
-		The labels of train data
-	k_folds: integer
-		The number of folds
-	score_type: string
-		The name of score type
-
-	Returns
-	-------
-	estimator_score: list of floats
-		This list contains the best cross validation f1 scores of machine learning
-		algorithms
-	estimator_std: list of floats
-		This list contains the cross validation standard deviations of machine learning
-		algorithms
-   """
-
-    estimator_score, estimator_std = None, None  # return results
-    kfold = model_selection.KFold(n_splits=k_folds, shuffle=True)
-    
-    # k-fold cross validation
-    print("Start cross validation...")
-    f1_score = model_selection.cross_val_score(estimator, x_train, y_train, cv=kfold, scoring=score_type, n_jobs=-1)
-    # append results to the return lists
-    estimator_score = f1_score.mean()
-    estimator_std = f1_score.std()
-    print("End cross validation, "+score_type+"="+str(f1_score.mean())+"\n")
-
-    return estimator_score, estimator_std
-
-
-# ==============================================================================#
-#                     Visualize the cross validation results                   #
-# ==============================================================================#
-import matplotlib.pyplot as plt
-
-
-def plot_graphs(title_name, column_name, labels, f1_score, std):
-    """
-    This function will plot the results of cross validation for each machine
-    learning algorithm
+    Print an evaluation report about the variance for different values of
+    components(dimensions).
+    Components will start from 1,2,3,4,5 to max_components with 10 components
+    step on every round after 5.
 
     Parameters
     ----------
-	title_name: string
-		Method that extracts features
-    labels: list of strings
-        This list contains the names of machine learning algorithms
-    f1_score: list of floats
-		This list contains the best cross validation f1 scores of machine learning
-		algorithms
-	std: list of floats
-		his list contains the cross validation standard deviations of machine learning
-		algorithms
+    features : numpy array
+        Features to which dimensionality reduction will be applied.
+    labels : numpy array
+        Classification of the given data.
+    max_components: int (default 200)
+        Determines the number of components that we want on our report
     """
 
-    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
-    axes[0].bar(labels, f1_score, color='tab:green')
-    axes[0].set_ylabel('f1 score')
-    axes[1].bar(labels, std, color='tab:orange')
-    axes[1].set_ylabel('Standard Deviation')
-    fig.suptitle(title_name)
-    fig.savefig(column_name + title_name + '.png')
-    plt.show()
-    plt.close(fig)
+    columns = ["Num Components", "LDA Time", "Variance explained"]
+
+    dimensions_to_test = [i for i in range(1, 6, 1) if i <= features.shape[1]]
+    dimensions_to_test += [i for i in (range(10, max_components + 1, 10))
+                           if i <= features.shape[1]]
+    dimensions_to_test.reverse()
+
+    model_results_df = pd.DataFrame(0, index=dimensions_to_test, \
+                                    columns=columns)
+
+    print("LDA feature extraction report:")
+    for k in dimensions_to_test:
+        print("Handling num dimensions = ", k)
+        start_time = time.time()
+
+        # Instantiate LDA object with k components
+        model = LinearDiscriminantAnalysis(n_components=k)
+
+        model.fit(features, labels)
+
+        model_time = time.time() - start_time
+
+        variance = np.sum(model.explained_variance_ratio_)
+
+        # Update df
+        model_results_df.loc[k] = [k, model_time, variance]
+
+    # Display evaluation report
+    display(model_results_df)
 
 
-# ==============================================================================#
-#                             Execution on data                                #
-# ==============================================================================#
+def dimensionality_reduction_lda(n_components, train_features, labels, test_features):
+    """
+    Perfome a dimensionality reduction with TruncatedSVD or PCA on both train
+    and test features. train_features will train the model.
+    The dimensions will be reduced to n_components.
+
+    Parameters
+    ----------
+    n_components : int
+        New number of dimensions.
+    train_features: numpy array
+    labels : numpy array
+        Classification of the given train data.
+    test_features: numpy array
+
+
+    Returns
+    -------
+    train_features_reduced : numpy array
+        Features after dimensionality reduction.
+    test_features_reduced : numpy array
+        Features after dimensionality reduction.
+    """
+
+    model = LinearDiscriminantAnalysis(n_components=n_components)
+    model.fit(train_features, labels)
+
+    # Transform the training and test class data with a dim reduction algorithm.
+    train_features_reduced = model.transform(train_features)
+    test_features_reduced = model.transform(test_features)
+
+    variance = np.sum(model.explained_variance_ratio_)
+    print('Variance explained with '+n_components+' components: '+ variance)
+
+    return train_features_reduced, test_features_reduced
+
+
+# =============================================================================#
+#                                      Test                                    #
+# =============================================================================#
+
+import feature_creation as fc
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
+from sklearn.linear_model import LogisticRegression
 
-"""
-def reports(features, labels, model, pca):
+def reports(features, labels, model):
     print('Reports for', model)
     train_features, test_features, train_labels, test_labels = \
-        train_test_split(features, labels, test_size=0.1, shuffle=True)
+        train_test_split(features, labels, test_size=0.2, shuffle=True)
 
-    reduction_components_evaluation_report(features, pca=pca)
+    train_features,test_features = dimensionality_reduction_lda(1,train_features,labels,test_labels)
     lr_clf = LogisticRegression()
     lr_clf.fit(train_features, train_labels)
 
@@ -556,95 +522,23 @@ def reports(features, labels, model, pca):
 
     print("Linear Regression Classifier:")
     print(classification_report(test_labels, y_pred))
-"""
 
-def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
-    clf_list = [("logistic_regression", LogisticRegression(), {'C': np.logspace(-4, 4, 20),\
-                                                               'max_iter': [100, 200, 300, 400, 500]}),
-                ("k-nn", KNeighborsClassifier(), {'n_neighbors': np.arange(1, 25),  \
-                                                  'metric': ['euclidean', 'minkowski']}),
-                ("mlp", MLPClassifier(), {'hidden_layer_sizes': [(50,50,50), (50,100,50), (100,)], \
-                                          'alpha': [0.0001, 0.05],\
-                                          'learning_rate': ['constant','adaptive'],\
-                                          'max_iter': [300, 500, 800, 1000, 2000]}),
-                ("random_forest", RandomForestClassifier(), {'n_estimators': [200, 500, 1000], \
-                                                             'max_features': ['sqrt', 'log2'], \
-                                                             'max_depth' : [50, 100, 200, 300]}),
-                ("svc", SVC(), {'C': [0.1, 1, 10, 100], \
-                                'gamma': [0.01, 0.1, 1],\
-                                'kernel': ['rbf', 'linear', 'sigmoid']})]
 
-    column_list = ['text', 'processed_lem', 'processed_stem', 'processed_lem_key', 'processed_stem_key', \
-                   'processed_text_deep_without_url', 'processed_text_deep_without_url_key']
+if __name__ == "__main__":
+# this won't be run when imported
+    ## Read datasets
+    tweet_df = pd.read_csv('dataset/train_dropduplicates.csv')
+    test_df = pd.read_csv('dataset/test_processed.csv')
+    print("Number of tweets, features:", tweet_df.shape)
+    print("Number of test, features:", test_df.shape)
 
-    for column in column_list:
-        print("*** Column is "+column)
-        docs = list(df[column])
-        labels = df['target']
 
-        if (bert):
-            print("Running bert...")
-            features = bert_feature_creation(docs)
-            print("Features created")
-            #reports(features, labels, 'BERT',pca=True)
-            model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
-            plot_graphs('BERT', column, model_names, model_scores, model_std)
-            print("----------------------------------------------------\n")
+    print("Running bert...")
+    features = fc.bert_feature_creation(list(tweet_df['processed']))
+    print("Features created")
 
-        if (doc2vec):
-            print("Running doc2vec...")
-            model = train_doc2vec_model(docs)
-            features = doc2vec_feature_creation(model, docs)
-            print("Features created")
-            #reports(features, labels, 'DOC2VEC',pca=True)
-            model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
-            plot_graphs('DOC2VEC', column, model_names, model_scores, model_std)
-            print("----------------------------------------------------\n")
+    reports(features,tweet_df['target'],'BERT')
 
-        if (tfidf):
-            print("Running tfidf...")
-            features, _ = train_vectorizer(docs, tf_idf=True)
-            print("Features created")
-            #reports(features, labels, 'TFIDF',pca=False)
-            model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
-            plot_graphs('TFIDF', column, model_names, model_scores, model_std)
-            print("----------------------------------------------------\n")
-
-        if (bow):
-            print("Running bow...")
-            features, _ = train_vectorizer(docs, tf_idf=False)
-            print("Features created")
-            #reports(features, labels, 'Bag of words',pca=False)
-            model_names, model_scores, model_std = grid_search_cross_validation(clf_list, features, labels)
-            plot_graphs('Bag of words', column, model_names, model_scores, model_std)
-            print("----------------------------------------------------\n")
-
-        print("****************************************************\n")
-
-def predict_results(train_df, test_df,text_col):
-    x_train = list(train_df[text_col])
-    y_train = train_df['target']
-    x_test = list(test_df[text_col])
-
-    features_train = bert_feature_creation(x_train)
-    features_test = bert_feature_creation(x_test)
-
-    
-    svc_clf = SVC(C=10, gamma=0.01, kernel='rbf')
-    cross_validation(svc_clf, features_train, y_train)
-    svc_clf.fit(features_train, y_train)
-
-    y_pred = svc_clf.predict(features_test)
-    submission = pd.read_csv("dataset/sample_submission.csv")
-    submission['target'] = y_pred
-    submission.to_csv('submission.csv', index=False)
-
-## Read datasets
-tweet_df = pd.read_csv('dataset/train_dropduplicates.csv')
-test_df = pd.read_csv('dataset/test_processed.csv')
-print("Number of tweets, features:", tweet_df.shape)
-print("Number of test, features:", test_df.shape)
-#execute(tweet_df, bert=True, doc2vec=False, tfidf=False, bow=False)
-predict_results(tweet_df, test_df,'processed')
-
-print("End execution")
+    reduction_components_evaluation_report_lda(features, tweet_df['target'])
+    reduction_components_evaluation_report(features, pca=True)
+    reduction_components_evaluation_report(features, pca=False)
