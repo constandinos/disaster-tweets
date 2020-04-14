@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import feature_creation as fc
 
+
 # =============================================================================#
 #                     Grid Search and Cross Validation                         #
 # =============================================================================#
@@ -241,35 +242,85 @@ def predict_results(train_df, test_df,text_col):
     y_train = train_df['target']
     x_test = list([str(x) for x in test_df[text_col]])
 
-    
     #features_train = fc.bert_feature_creation(x_train)
     #features_test = fc.bert_feature_creation(x_test)
 
-    features_train, vectorizer = fc.train_vectorizer(x_train)
+    features_train, vectorizer = fc.train_vectorizer(x_train,tf_idf=True)
     features_test = vectorizer.transform(x_test)
-    
-    svc_clf = SVC(C=10, gamma=0.01, kernel='rbf')
-    cross_validation(svc_clf, features_train, y_train)
-    svc_clf.fit(features_train, y_train)
+    #svc_clf = SVC(C=10, gamma=0.01, kernel='rbf')
+    #cross_validation(svc_clf, features_train, y_train)
+    #svc_clf.fit(features_train, y_train)
 
-    y_pred = svc_clf.predict(features_test)
+    features_train = features_train.toarray()
+    features_test = features_test.toarray()
+
+    print(features_train)
+    lr_clf = LogisticRegression()
+    features_train, features_test = fc.dimensionality_reduction_lda(2000,features_train,list(y_train),features_test)
+    
+    lr_clf.fit(features_train, list(y_train))
+
+    y_pred = lr_clf.predict(features_test)
     submission = pd.read_csv("dataset/sample_submission.csv")
     submission['target'] = y_pred
     submission.to_csv('submission.csv', index=False)
 
 
 def choose_best_vectorizer(df):
-    process_columns = ['processed']
+    process_columns = ['text','processed','lemmatization','stemming']
     estimators = [LogisticRegression(),
                   KNeighborsClassifier(),
-                  MLPClassifier(),
+                  #MLPClassifier(),
                   RandomForestClassifier(),
                   SVC()]
     name_estimators = ["logistic_regression",
                        "k-nn",
-                       "mlp",
+                       #"mlp",
                        "random_forest",
                        "svc"]
+
+
+    Y = list(df['target'])
+
+    # Check with the defaul parameters for all columns
+    for col in process_columns:
+        tfidf_scores = []
+        bow_scores = []
+        print("-------------")
+        print("Start column: "+col)
+        X = list(df[col].astype(str))
+
+        print("Running tf-idf(default)...")
+        features_tfidf, _ = fc.train_vectorizer(X,tf_idf=True)
+        print("Features created")
+        #features_reduced_tfidf, _ = fc.dimensionality_reduction_lda(2000,features_tfidf.toarray(),Y)
+        # performance of tfidf with default parameters
+        for estimator,name in zip(estimators,name_estimators):
+            print("(default)Cross validation for "+name)
+            score,_=cross_validation(estimator, features_reduced_tfidf, Y)
+            tfidf_scores.append(score)
+        print("------------")
+
+        print("Running bow(default)...")
+        features_bow, _ = fc.train_vectorizer(X,tf_idf=False)
+        print("Features created")
+        #features_reduced_bow, _ = fc.dimensionality_reduction_lda(2000,features_bow.toarray(),Y)
+        # performance of bow with default parameters
+        for estimator,name in zip(estimators,name_estimators):
+            print("(default)Cross validation for "+name)
+            score,_=cross_validation(estimator, features_reduced_bow, Y)
+            bow_scores.append(score)
+
+        print("End column: "+col)
+        print("-----------")
+        max_index = np.argmax(tfidf_scores)
+        print("Report for column: "+col)
+        print("Best of tf-idf: "+str(name_estimators[max_index])+" with score "+str(tfidf_scores[max_index]))
+        max_index = np.argmax(bow_scores)
+        print("Best of bow:"+str(name_estimators[max_index])+" with score "+str(bow_scores[max_index]))
+        print("-----------")
+
+     
 
 
 if __name__ == "__main__":
@@ -296,9 +347,15 @@ if __name__ == "__main__":
 #   Reason: If there is a word that appears in more than the choosen percent of 
 #   the documents then this word might confuse our estimator. To reduce this 
 #   confusion we have decided to check for some reasonable percentages.
-    choose_best_vectorizer(tweet_df)
     
+    #choose_best_vectorizer(tweet_df)
+    
+
+
+
+
+
     #execute(tweet_df, bert=True, doc2vec=False, tfidf=False, bow=False)
-    #predict_results(tweet_df, test_df,'lemmatization')
+    predict_results(tweet_df, test_df,'processed')
 
     print("End execution")

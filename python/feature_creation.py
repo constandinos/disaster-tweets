@@ -368,7 +368,7 @@ def reduction_components_evaluation_report(features, max_components=200, \
     display(model_results_df)
 
 
-def dimensionality_reduction(n_components, train_features, test_features, \
+def dimensionality_reduction(n_components, train_features, test_features=None, \
                              pca=True):
     """
     Perfome a dimensionality reduction with TruncatedSVD or PCA on both train
@@ -400,10 +400,13 @@ def dimensionality_reduction(n_components, train_features, test_features, \
 
     # Transform the training and test class data with a dim reduction algorithm.
     train_features_reduced = model.transform(train_features)
-    test_features_reduced = model.transform(test_features)
+    if test_features is not None:
+        test_features_reduced = model.transform(test_features)
+    else:
+        test_features_reduced = None
 
     variance = np.sum(model.explained_variance_ratio_)
-    print('Variance explained with '+n_components+' components: '+ variance)
+    print('Variance explained with '+str(n_components)+' components: '+ str(variance))
 
     return train_features_reduced, test_features_reduced
 
@@ -462,7 +465,7 @@ def reduction_components_evaluation_report_lda(features, labels, max_components=
     display(model_results_df)
 
 
-def dimensionality_reduction_lda(n_components, train_features, labels, test_features):
+def dimensionality_reduction_lda(n_components, train_features, labels, test_features=None):
     """
     Perfome a dimensionality reduction with TruncatedSVD or PCA on both train
     and test features. train_features will train the model.
@@ -491,12 +494,80 @@ def dimensionality_reduction_lda(n_components, train_features, labels, test_feat
 
     # Transform the training and test class data with a dim reduction algorithm.
     train_features_reduced = model.transform(train_features)
-    test_features_reduced = model.transform(test_features)
+    if test_features is not None:
+        test_features_reduced = model.transform(test_features)
+    else:
+        test_features_reduced = None
 
     variance = np.sum(model.explained_variance_ratio_)
-    print('Variance explained with '+n_components+' components: '+ variance)
+    print('Variance explained with '+str(n_components)+' components: '+ str(variance))
 
     return train_features_reduced, test_features_reduced
+
+
+# =============================================================================#
+#                     Number of components based on threshold                  #
+# =============================================================================#
+
+def select_n_components(goal_var, X, Y=None, algorithm='PCA'):
+    """
+    Selecting The Best Number Of Components For Dimensionality reduction based
+    on the explained variance.
+
+    Parameters
+    ----------
+    goal_var : float
+        Goal threshold.
+    X : numpy array
+        Data to fit the model for dimensionality reduction
+    Y : numpy array(default None)
+        Labels in case the choosen algorithm is LDA
+    algorithm: string(default PCA)
+        Options, 'PCA', 'LDA' otherwise 'TSVD'
+
+    Returns
+    -------
+    n_components: int
+        The number of components that you need to overtake the goal threshold.
+    """
+    model = None
+    if (algorithm == 'PCA'):
+        model = PCA(n_components=None)
+    elif (algorithm == 'LDA'):
+        model = LinearDiscriminantAnalysis(n_components=None)
+    else:
+        model = TruncatedSVD(n_components=None)
+
+
+    if (algorithm == 'LDA'):
+        model.fit(X,Y)
+    else:
+        model.fit(X)
+
+    var_ratio = model.explained_variance_ratio_
+
+    # Set initial variance explained so far
+    total_variance = 0.0
+    
+    # Set initial number of features
+    n_components = 0
+    
+    # For the explained variance of each feature:
+    for explained_variance in var_ratio:
+        
+        # Add the explained variance to the total
+        total_variance += explained_variance
+        
+        # Add one to the number of components
+        n_components += 1
+        
+        # If we reach our goal level of explained variance
+        if total_variance >= goal_var:
+            # End the loop
+            break
+            
+    # Return the number of components
+    return n_components
 
 
 # =============================================================================#
