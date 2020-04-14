@@ -1,7 +1,7 @@
 ain't:am not / are not
 aren't:are not / am not
-can't:cannot
-can't've:cannot have
+can't:can not
+can't've:can not have
 'cause:because
 could've:could have
 couldn't:could not
@@ -22,12 +22,12 @@ how'd:how did
 how'd'y:how do you
 how'll:how will
 how's:how has / how is
-i'd:I had / I would
-i'd've:I would have
-i'll:I shall / I will
-i'll've:I shall have / I will have
-i'm:I am
-i've:I have
+i'd:i had / i would
+i'd've:i would have
+i'll:i shall / i will
+i'll've:i shall have / i will have
+i'm:i am
+i've:i have
 isn't:is not
 it'd:it had / it would
 it'd've:it would have
