@@ -258,6 +258,20 @@ def predict_results(train_df, test_df,text_col):
     submission.to_csv('submission.csv', index=False)
 
 
+def choose_best_vectorizer(df):
+    process_columns = ['processed']
+    estimators = [LogisticRegression(),
+                  KNeighborsClassifier(),
+                  MLPClassifier(),
+                  RandomForestClassifier(),
+                  SVC()]
+    name_estimators = ["logistic_regression",
+                       "k-nn",
+                       "mlp",
+                       "random_forest",
+                       "svc"]
+
+
 if __name__ == "__main__":
 # this won't be run when imported
     ## Read datasets
@@ -265,7 +279,26 @@ if __name__ == "__main__":
     test_df = pd.read_csv('dataset/test_processed.csv')
     print("Number of tweets, features:", tweet_df.shape)
     print("Number of test, features:", test_df.shape)
+    
+# =============================================================================#
+#                          Choose Best Vectorizer                              #
+# =============================================================================#
+# At this point of our experiments we decided that we have to choose the best
+# vectorizer among the TFIDF and COUNT vectorizers (a.k.a bag of words).
+# For choosing the best vectorizer we have tried to find the best hyper params
+# for these vectorizers and choose one of the TFIDF and COUNT along side with
+# their best hyper parameters.
+# The hyper parameters that we have explored are:
+# 1. ngram_range : (1,1) , (1,2) , (2,2)
+#   Reason: From our EDA analysis we have seen that tweeter's most common length
+#   is between 10 to 20, so trying to increase ngrams will not help at all.
+# 2. max_df : 0.80 , 0.90, 1.0
+#   Reason: If there is a word that appears in more than the choosen percent of 
+#   the documents then this word might confuse our estimator. To reduce this 
+#   confusion we have decided to check for some reasonable percentages.
+    choose_best_vectorizer(tweet_df)
+    
     #execute(tweet_df, bert=True, doc2vec=False, tfidf=False, bow=False)
-    predict_results(tweet_df, test_df,'lemmatization')
+    #predict_results(tweet_df, test_df,'lemmatization')
 
     print("End execution")
