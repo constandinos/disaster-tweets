@@ -515,8 +515,7 @@ def step3_further_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test):
                  LogisticRegression(),\
                  {'C': np.logspace(-4, 1, 20),\
                   'max_iter': [50, 100, 150, 200],\
-                  'solver': ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga'],\
-                  'multi_class': ['auto', 'ovr', 'multinomial']})]
+                  'solver': ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga']})]
 
     best_column = 'ekphrasis'
     best_vectorizer = None
