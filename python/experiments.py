@@ -596,7 +596,7 @@ if __name__ == "__main__":
     step3_further_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test)
 
     ### STEP4 - Try gridsearch with more parameters on the best result from STEP3
-    #columns = ['ekphrasis',] 
+    #columns = ['ekphrasis', 'keyword_ekphrasis', 'location_ekphrasis', 'keyword_location_ekphrasis'] 
     #step4_inspect_keywords_locations(column, X_train, Y_train, X_test, Y_test))
 
     ###### END OF EXPERIMENTS
