@@ -460,20 +460,22 @@ def step2_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test):
                                 'gamma': [0.001, 0.01, 0.1, 1],\
                                 'kernel': ['rbf', 'linear', 'sigmoid']})]
 
-    # Grid search for processed column with tfidf vectorizer (default)
-    train_text = X_train['processed'].to_list()
-    test_text = X_test['processed'].to_list()
+    # Grid search for no_punk_no_abb column with tfidf vectorizer (default)
+    print('Column: no_punk_no_abb, Vectorizer: bert')
+    train_text = X_train['no_punk_no_abb'].to_list()
+    test_text = X_test['no_punk_no_abb'].to_list()
 
-    tfidf_train_features, tfidf_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=True)
-    tfidf_test_features = tfidf_train_vectorizer.transform(test_text)
-    model_names, model_scores, model_std, test_scores = grid_search_cross_validation(clf_list, tfidf_train_features, Y_train, tfidf_test_features, Y_test)
+    bert_train_features = fc.bert_feature_creation(train_text)
+    bert_test_features = fc.bert_feature_creation(test_text)
+    model_names, model_scores, model_std, test_scores = grid_search_cross_validation(clf_list, bert_train_features, Y_train, bert_test_features, Y_test)
 
     for i in range(0,len(model_names)):
         print(str(model_names[i])+"\t"+str(model_scores[i])+"\t"+str(model_std[i])+"\t"+str(test_scores[i]))
 
-    # Grid search for stemming column with tfidf vectorizer (max_features=5000)
-    train_text = X_train['stemming'].to_list()
-    test_text = X_test['stemming'].to_list()
+    # Grid search for lemmatization column with tfidf vectorizer (max_features=5000)
+    print('Column: lemmatization, Vectorizer: tfidf (max_features=5000)')
+    train_text = X_train['lemmatization'].to_list()
+    test_text = X_test['lemmatization'].to_list()
 
     tfidf_train_features, tfidf_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=True, max_features=5000)
     tfidf_test_features = tfidf_train_vectorizer.transform(test_text)
@@ -483,6 +485,7 @@ def step2_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test):
         print(str(model_names[i])+"\t"+str(model_scores[i])+"\t"+str(model_std[i])+"\t"+str(test_scores[i]))
 
     # Grid search for ekphrasis column with bert
+    print('Column: ekphrasis, Vectorizer: bert')
     train_text = X_train['ekphrasis'].to_list()
     test_text = X_test['ekphrasis'].to_list()
 
@@ -494,6 +497,7 @@ def step2_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test):
         print(str(model_names[i])+"\t"+str(model_scores[i])+"\t"+str(model_std[i])+"\t"+str(test_scores[i]))
 
     # Grid search for ekphrasis_rm column with bert
+    print('Column: ekphrasis_rm, Vectorizer: bert')
     train_text = X_train['ekphrasis_rm'].to_list()
     test_text = X_test['ekphrasis_rm'].to_list()
 
@@ -530,10 +534,36 @@ def step3_further_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test):
     print("Test F1-weighted: "+str(test_score[0]))
 
 
+def step4_inspect_keywords_locations(columns, X_train, Y_train, X_test, Y_test):
+    for column in columns:
+        print("\nColumn: " + column + '\n')
+        train_text = X_train[column].astype(str).to_list()
+        test_text = X_test[column].astype(str).to_list()
+
+        #Bert
+        bert_train_features = fc.bert_feature_creation(train_text)
+        bert_test_features = fc.bert_feature_creation(test_text)
+
+        estimator = LogisticRegression(C=None, max_iter=None, solver=None, multi_class=None)
+
+        
+        mean_score, std_score = cross_validation(estimator, bert_train_features, Y_train)
+
+        estimator.fit(X_train,Y_train)
+        Y_pred = estimator.predict(bert_test_features)
+        test_score = f1_score(Y_test,Y_pred, average='weighted')
+
+        print("logistic_regression:")
+        print("CV F1-weighted: "+str(mean_score))
+        print("CV F1-weighted STD : "+str(std_score))
+        print("Test F1-weighted: "+str(test_score))
+        print()
+
 
 if __name__ == "__main__":
 # this won't be run when imported
 
+    ###### START EXPERIMENTS
 
     ### STEP0 - Split initial dataset
     # !!!! DO NOT RUN THIS FUNCTION YOU WILL LOSE OUR SPLIT (SPLIT IS RANDOM)
@@ -550,13 +580,13 @@ if __name__ == "__main__":
     
 
     ### STEP1 - Find best vectorizer for each column alongside their ml algorithm
-    columns = ['text', 'processed', 'lemmatization', 'stemming', 'no_punk_no_abb', 'ekphrasis', 'ekphrasis_rm', 'ekphrasis_stemming', 'ekphrasis_no_symtags']
+    #columns = ['text', 'processed', 'lemmatization', 'stemming', 'no_punk_no_abb', 'ekphrasis', 'ekphrasis_rm', 'ekphrasis_stemming', 'ekphrasis_no_symtags']
     X_train = train_df.astype(str)
     X_test = test_df.astype(str)
     Y_train = train_df['target'].astype(str)
     Y_test = test_df['target'].astype(str)
 
-    step1_find_best_for_columns(columns, X_train, Y_train, X_test, Y_test)
+    #step1_find_best_for_columns(columns, X_train, Y_train, X_test, Y_test)
     
     ### STEP2 - Run gridsearch on the best result from STEP1
     #step2_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test)
@@ -564,16 +594,17 @@ if __name__ == "__main__":
     ### STEP3 - Prepend to the column with the best result from STEP2 the keywords
     # and the locations (try to prepend only the keywords, only the locations and
     # both)
-    #step3_further_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test)
+    step3_further_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test)
 
     ### STEP4 - Try gridsearch with more parameters on the best result from STEP3
+    #columns = ['ekphrasis',] 
+    #step4_inspect_keywords_locations(column, X_train, Y_train, X_test, Y_test))
+
+    ###### END OF EXPERIMENTS
 
 
 
 
-
-
-    
     #choose_best_vectorizer(tweet_df)
     
 
