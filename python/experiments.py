@@ -104,12 +104,12 @@ def cross_validation(estimator, x_train, y_train, k_folds=10, score_type='f1_wei
     kfold = model_selection.KFold(n_splits=k_folds, shuffle=True)
     
     # k-fold cross validation
-    print("Start "+str(k_folds)+"-folds cross validation...")
+    #print("Start "+str(k_folds)+"-folds cross validation...")
     f1_score = model_selection.cross_val_score(estimator, x_train, y_train, cv=kfold, scoring=score_type, n_jobs=-1)
     # append results to the return lists
     estimator_score = f1_score.mean()
     estimator_std = f1_score.std()
-    print("End cross validation, "+score_type+"="+str(f1_score.mean())+"\n")
+    #print("End cross validation")
 
     return estimator_score, estimator_std
 
@@ -333,8 +333,9 @@ def get_scores(X_train, Y_train, X_test, Y_test, vectorizer_name):
                        "random_forest",
                        "svc"]
 
-    print("Vectorizer"+str(vectorizer_name))
-    print("Estimator\tMean f1-score\tStd f1-score\tTest-score")
+    #print("Vectorizer"+str(vectorizer_name))
+    #print("Estimator\tMean f1-score\tStd f1-score\tTest-score")
+    print(str(vectorizer_name), end = '\t')
     for estimator, estimator_name in zip(estimators, name_estimators):
         mean_score, std_score = cross_validation(estimator, X_train, Y_train)
 
@@ -342,11 +343,12 @@ def get_scores(X_train, Y_train, X_test, Y_test, vectorizer_name):
         Y_pred = estimator.predict(X_test)
         test_score = f1_score(Y_test,Y_pred, average='weighted')
 
-        print(estimator_name+"\t"+str(mean_score)+"\t"+str(std_score)+"\t"+str(test_score))
+        print(str(mean_score)+"\t"+str(std_score)+"\t"+str(test_score), end = '\t')
+    print()
 
 def find_best_for_columns(columns, X_train, Y_train, X_test, Y_test):
     for column in columns:
-        print("Column: " + column)
+        print("Column: " + column + '\n')
         train_text = X_train[column].to_list()
         test_text = X_test[column].to_list()
 
@@ -378,7 +380,7 @@ def find_best_for_columns(columns, X_train, Y_train, X_test, Y_test):
         tfidf_train_features, tfidf_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=True, ngram_range=(2,2),\
                                                                            max_features=5000)
         tfidf_test_features = tfidf_train_vectorizer.transform(test_text)
-        get_scores(tfidf_train_features, Y_train, tfidf_test_features, Y_test, 'tfidf, ngrams=(2,2), , features=5000')
+        get_scores(tfidf_train_features, Y_train, tfidf_test_features, Y_test, 'tfidf, ngrams=(2,2), features=5000')
 
         tfidf_train_features, tfidf_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=True, min_df=0.05)
         tfidf_test_features = tfidf_train_vectorizer.transform(test_text)
@@ -401,7 +403,7 @@ def find_best_for_columns(columns, X_train, Y_train, X_test, Y_test):
         bow_train_features, bow_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=False, ngram_range=(2, 2), \
                                                                            max_features=5000)
         bow_test_features = bow_train_vectorizer.transform(test_text)
-        get_scores(bow_train_features, Y_train, bow_test_features, Y_test, 'bow, ngrams=(2,2), , features=5000')
+        get_scores(bow_train_features, Y_train, bow_test_features, Y_test, 'bow, ngrams=(1,2), , features=5000')
 
         bow_train_features, bow_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=False, min_df=0.05)
         bow_test_features = bow_train_vectorizer.transform(test_text)
