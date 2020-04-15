@@ -1,0 +1,1062 @@
+Number of tweets, features: (6809, 8)
+Column: text
+Vectorizerbert
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.8106875619632449
+
+logistic_regression	0.8106875619632449	0.013470729981132915	0.8080269379750147
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.778311936430708
+
+k-nn	0.778311936430708	0.01944529988467628	0.7798919448826153
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6960640040974269
+
+DecisionTreeClassifier	0.6960640040974269	0.013642142175410252	0.6896152687209202
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7588852065690632
+
+random_forest	0.7588852065690632	0.01303188078757323	0.75251951422116
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.793226020425633
+
+svc	0.793226020425633	0.016192650991551507	0.7843601451833738
+Vectorizerdoc2vec
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7398707899815582
+
+logistic_regression	0.7398707899815582	0.016893697518054814	0.7447210156461257
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.704703621442748
+
+k-nn	0.704703621442748	0.020726498178064857	0.6606434053093505
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.649778397299934
+
+DecisionTreeClassifier	0.649778397299934	0.016961896148546457	0.6314896517617037
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6839999433204228
+
+random_forest	0.6839999433204228	0.020640198876573423	0.6852938264737678
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7446506111983725
+
+svc	0.7446506111983725	0.01387288524905376	0.7158512374141082
+Vectorizertfidf
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7811304185519754
+
+logistic_regression	0.7811304185519754	0.022046378185300686	0.8033252925014122
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7604424338887096
+
+k-nn	0.7604424338887096	0.008747104852667041	0.7635273072982955
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7016560989579628
+
+DecisionTreeClassifier	0.7016560989579628	0.014216860098720682	0.7096429519296423
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7281930183507515
+
+random_forest	0.7281930183507515	0.02163841029739071	0.7320186943704466
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4444924812704478
+
+svc	0.4444924812704478	0.03265595596250144	0.4109736680112935
+Vectorizertfidf, features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7868190740311977
+
+logistic_regression	0.7868190740311977	0.012545639741490417	0.8043641157376221
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.531631115978469
+
+k-nn	0.531631115978469	0.026729466335197766	0.5190408583151489
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6751556615108572
+
+DecisionTreeClassifier	0.6751556615108572	0.02274573948043124	0.6873095275487615
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7385928791761228
+
+random_forest	0.7385928791761228	0.03142430543914485	0.7279792351532233
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4442394775826128
+
+svc	0.4442394775826128	0.016591660420200497	0.4109736680112935
+Vectorizertfidf, ngrams=(1,2), features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7844716184761303
+
+logistic_regression	0.7844716184761303	0.01929036906605586	0.7925769309109891
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.5324947814187164
+
+k-nn	0.5324947814187164	0.01944769954278605	0.5289022032974425
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6683680813841331
+
+DecisionTreeClassifier	0.6683680813841331	0.01477101416484898	0.6958289904288143
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7289941772192755
+
+random_forest	0.7289941772192755	0.014893553530138819	0.7356187908414825
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.44425863680288674
+
+svc	0.44425863680288674	0.01861882094592797	0.4109736680112935
+Vectorizertfidf, ngrams=(1,2), , features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6974461031818594
+
+logistic_regression	0.6974461031818594	0.024436179022504213	0.6990675243784857
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.5799341544623997
+
+k-nn	0.5799341544623997	0.024620792474962176	0.6222768378814926
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6600447452585072
+
+DecisionTreeClassifier	0.6600447452585072	0.014167413662018728	0.6641005177435945
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6875472923240298
+
+random_forest	0.6875472923240298	0.01552352771566906	0.6608436091882893
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4441850153356907
+
+svc	0.4441850153356907	0.010347252067528574	0.4109736680112935
+Vectorizertfidf, min_df=0.05
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6540374771180962
+
+logistic_regression	0.6540374771180962	0.02408238057690194	0.6614783274758944
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.61726017313867
+
+k-nn	0.61726017313867	0.023134904571291994	0.6235021160828794
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6111472148800379
+
+DecisionTreeClassifier	0.6111472148800379	0.021935228989501305	0.6175557126923706
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6295934048673909
+
+random_forest	0.6295934048673909	0.021923822613351678	0.6380425852824775
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6428871431759068
+
+svc	0.6428871431759068	0.020842410481979764	0.6583476303353313
+Vectorizerbow
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7860133736545272
+
+logistic_regression	0.7860133736545272	0.015158182553274202	0.800848373604334
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6427242448954205
+
+k-nn	0.6427242448954205	0.020061124567861473	0.6510606549698719
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7090689875596258
+
+DecisionTreeClassifier	0.7090689875596258	0.02179826400720802	0.7235334008622539
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7409974180507459
+
+random_forest	0.7409974180507459	0.012153708998960506	0.7352280355056342
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4442916760401171
+
+svc	0.4442916760401171	0.021244520916805634	0.4109736680112935
+Vectorizerbow, features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7846138618438574
+
+logistic_regression	0.7846138618438574	0.017643903749718217	0.8021003875621054
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6067097821973207
+
+k-nn	0.6067097821973207	0.020132106194251563	0.6006460652475684
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7065928502596174
+
+DecisionTreeClassifier	0.7065928502596174	0.01780601804627271	0.7130146953946799
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7460613582566074
+
+random_forest	0.7460613582566074	0.013926064809631508	0.7396682969871109
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4441930774594458
+
+svc	0.4441930774594458	0.01183885026604746	0.4109736680112935
+Vectorizerbow, ngrams=(1,2), features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7814260880133084
+
+logistic_regression	0.7814260880133084	0.021123112541261313	0.7884180405680709
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.5773703805259991
+
+k-nn	0.5773703805259991	0.02253941726719927	0.5609277518007784
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6917822983213314
+
+DecisionTreeClassifier	0.6917822983213314	0.01576668352332161	0.7206632841829007
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7340534354413638
+
+random_forest	0.7340534354413638	0.012122104032530966	0.7418481216474142
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.44452807977983183
+
+svc	0.44452807977983183	0.03448877921253143	0.4109736680112935
+Vectorizerbow, ngrams=(1,2), , features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7179810636968368
+
+logistic_regression	0.7179810636968368	0.009773196371511701	0.7234870298597694
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6201463148161772
+
+k-nn	0.6201463148161772	0.023601030496155438	0.6171126738871326
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6484092351990955
+
+DecisionTreeClassifier	0.6484092351990955	0.011080569483545267	0.6115287685213845
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6832542157558735
+
+random_forest	0.6832542157558735	0.013505376809873348	0.6738113371469711
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4443187951791786
+
+svc	0.4443187951791786	0.021507542978298454	0.4109736680112935
+Vectorizerbow, min_df=0.05
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6362427996144719
+
+logistic_regression	0.6362427996144719	0.02363833628128396	0.6469712036590625
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6233155255333171
+
+k-nn	0.6233155255333171	0.027558270659901407	0.6218144723849647
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6250053737710928
+
+DecisionTreeClassifier	0.6250053737710928	0.02649076573173021	0.6269640771132435
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.638061479155631
+
+random_forest	0.638061479155631	0.013557880987720558	0.6475592977233473
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.646859964051193
+
+svc	0.646859964051193	0.013687564244904174	0.6685415915525604
+Column: processed
+Vectorizerbert
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.8002947235510325
+
+logistic_regression	0.8002947235510325	0.018989618175697394	0.7958681095621528
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7748398461857787
+
+k-nn	0.7748398461857787	0.013319789568790224	0.7681475732657198
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6905800168875081
+
+DecisionTreeClassifier	0.6905800168875081	0.021017864468717715	0.6638626460913195
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7456014161218543
+
+random_forest	0.7456014161218543	0.020334537629809184	0.75032119990704
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7777122250829804
+
+svc	0.7777122250829804	0.018375984380256633	0.7854828917094658
+Vectorizerdoc2vec
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7557788986472461
+
+logistic_regression	0.7557788986472461	0.023600692122518762	0.7376549352901899
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.742059976199326
+
+k-nn	0.742059976199326	0.025443924056659767	0.7099946556679122
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.624318855251522
+
+DecisionTreeClassifier	0.624318855251522	0.026512252486349794	0.6134743173289429
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6757110493542227
+
+random_forest	0.6757110493542227	0.02538977428641938	0.6637119042001506
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7684851814257873
+
+svc	0.7684851814257873	0.020380340882429737	0.739266313813556
+Vectorizertfidf
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7841721440966383
+
+logistic_regression	0.7841721440966383	0.017024303427338145	0.79315996074203
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7531583882573338
+
+k-nn	0.7531583882573338	0.00959056016275626	0.7621449214408841
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6956606011872934
+
+DecisionTreeClassifier	0.6956606011872934	0.01958741009622459	0.6882829379316603
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.728928187363287
+
+random_forest	0.728928187363287	0.015173947682893872	0.7248880900981464
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4443578534646317
+
+svc	0.4443578534646317	0.024557124278479385	0.4109736680112935
+Vectorizertfidf, features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7830039717897235
+
+logistic_regression	0.7830039717897235	0.018986482475800197	0.7939720008478726
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.734665618291808
+
+k-nn	0.734665618291808	0.017843048957908725	0.7321038825322493
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6973593114475121
+
+DecisionTreeClassifier	0.6973593114475121	0.01729347589141164	0.6982997711132363
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7394709059238054
+
+random_forest	0.7394709059238054	0.017555605190992418	0.7388916521517045
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.44424338008096764
+
+svc	0.44424338008096764	0.01734598944006114	0.4109736680112935
+Vectorizertfidf, ngrams=(1,2), features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7870470768253941
+
+logistic_regression	0.7870470768253941	0.01524611352898298	0.7878166139727331
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.5947598366720798
+
+k-nn	0.5947598366720798	0.08535682336156282	0.5419246842581089
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6833828844116467
+
+DecisionTreeClassifier	0.6833828844116467	0.01804709924796119	0.6920010047051142
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7436854938259183
+
+random_forest	0.7436854938259183	0.013712015678079705	0.7358869820486138
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.44450807798366104
+
+svc	0.44450807798366104	0.03300838548123991	0.4109736680112935
+Vectorizertfidf, ngrams=(1,2), , features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7141584217220894
+
+logistic_regression	0.7141584217220894	0.021825518957459756	0.6992146094076689
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.588388509927224
+
+k-nn	0.588388509927224	0.022754164174500414	0.6252122084652615
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6772249412171087
+
+DecisionTreeClassifier	0.6772249412171087	0.02506060901731052	0.6695893302799723
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7031497326155041
+
+random_forest	0.7031497326155041	0.02188362667354698	0.6886834530736073
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4442475327086183
+
+svc	0.4442475327086183	0.017965604010969628	0.4109736680112935
+Vectorizertfidf, min_df=0.05
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.631601901260987
+
+logistic_regression	0.631601901260987	0.022090260396964687	0.6177367973843745
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.5992819841412657
+
+k-nn	0.5992819841412657	0.018290394994939372	0.5972112870208345
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.5926632642648016
+
+DecisionTreeClassifier	0.5926632642648016	0.01713009220006228	0.5976962743195714
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6156820228996694
+
+random_forest	0.6156820228996694	0.02285875739271481	0.6095339850159611
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.5885794824447347
+
+svc	0.5885794824447347	0.0204637101460872	0.5775743834703503
+Vectorizerbow
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.784725830228953
+
+logistic_regression	0.784725830228953	0.020020251226058328	0.7938393532757541
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6042120604437843
+
+k-nn	0.6042120604437843	0.02606206203853103	0.6094151125204904
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7078107243422858
+
+DecisionTreeClassifier	0.7078107243422858	0.018581101909393948	0.6914920825997362
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7417810852893278
+
+random_forest	0.7417810852893278	0.02515632164249758	0.7316526992723291
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.44449563273424914
+
+svc	0.44449563273424914	0.03149112922349646	0.4109736680112935
+Vectorizerbow, features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7809821868261434
+
+logistic_regression	0.7809821868261434	0.013399136119499543	0.7905195149434595
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6023177715786087
+
+k-nn	0.6023177715786087	0.026836488025653363	0.5980660904631555
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6961709966281662
+
+DecisionTreeClassifier	0.6961709966281662	0.014102642229863757	0.6896258713143342
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7488151368817463
+
+random_forest	0.7488151368817463	0.01645755809487815	0.7370524402663884
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4443086076965429
+
+svc	0.4443086076965429	0.022119024297005352	0.4109736680112935
+Vectorizerbow, ngrams=(1,2), features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7753993261256541
+
+logistic_regression	0.7753993261256541	0.014375853750088895	0.7758934380814769
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.5931728505275372
+
+k-nn	0.5931728505275372	0.027549735909393476	0.5887333768328166
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6898280325233629
+
+DecisionTreeClassifier	0.6898280325233629	0.012551383658025338	0.6956521356164912
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7495280408693665
+
+random_forest	0.7495280408693665	0.017418869113203738	0.7522301270617096
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.44424754807086286
+
+svc	0.44424754807086286	0.01762434729837391	0.4109736680112935
+Vectorizerbow, ngrams=(1,2), , features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7219714622589801
+
+logistic_regression	0.7219714622589801	0.018568858427074307	0.7040512792943814
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6003194644015564
+
+k-nn	0.6003194644015564	0.02263575143904448	0.5842859499086676
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6840385454904172
+
+DecisionTreeClassifier	0.6840385454904172	0.015565010306258627	0.6631011663310946
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6930466577611878
+
+random_forest	0.6930466577611878	0.010776973728771512	0.697496228338557
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.44432988786092664
+
+svc	0.44432988786092664	0.02335260339925057	0.4109736680112935
+Vectorizerbow, min_df=0.05
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6239495407720034
+
+logistic_regression	0.6239495407720034	0.021549287693254475	0.6287033646725277
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.5920677272692745
+
+k-nn	0.5920677272692745	0.021502373719014298	0.6027064514983571
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.5876557933705058
+
+DecisionTreeClassifier	0.5876557933705058	0.01710654733930481	0.6024076209634361
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6088477932069363
+
+random_forest	0.6088477932069363	0.015907953242974244	0.6155620057051776
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6050208273418988
+
+svc	0.6050208273418988	0.02554270115354576	0.6023775649255486
+Column: lemmatization
+Vectorizerbert
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.78908091913881
+
+logistic_regression	0.78908091913881	0.015541340772746295	0.7949924078628163
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7617071656140888
+
+k-nn	0.7617071656140888	0.018360468935552286	0.754660527525239
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6791607507587779
+
+DecisionTreeClassifier	0.6791607507587779	0.031239265316676413	0.6852022156695587
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7439385874396716
+
+random_forest	0.7439385874396716	0.023308905600781263	0.7428319500110716
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7710680213537112
+
+svc	0.7710680213537112	0.025318168113447434	0.7714506779267529
+Vectorizerdoc2vec
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7634394341327343
+
+logistic_regression	0.7634394341327343	0.016894485898155658	0.7405375271499469
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.744628245785248
+
+k-nn	0.744628245785248	0.021999414033859296	0.711558026796387
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6313284945194257
+
+DecisionTreeClassifier	0.6313284945194257	0.013243218421222336	0.6240328557605296
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6885964031583962
+
+random_forest	0.6885964031583962	0.019763651979312395	0.6693307908775392
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7669600345581349
+
+svc	0.7669600345581349	0.01999394814123717	0.7309614608485071
+Vectorizertfidf
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.775508961212813
+
+logistic_regression	0.775508961212813	0.015213705548601679	0.7890436185619681
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7432405410201663
+
+k-nn	0.7432405410201663	0.0167426266870252	0.7304821754800566
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7036235849085735
+
+DecisionTreeClassifier	0.7036235849085735	0.016643061008552545	0.7239905438705834
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.740018982557936
+
+random_forest	0.740018982557936	0.018917211485570462	0.7548309357837688
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.44442891336631785
+
+svc	0.44442891336631785	0.029329876261363394	0.4109736680112935
+Vectorizertfidf, features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7847450308392921
+
+logistic_regression	0.7847450308392921	0.009342613746037783	0.7882728821154011
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7230615032456453
+
+k-nn	0.7230615032456453	0.02145669631960966	0.7063049362963545
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7060644095799645
+
+DecisionTreeClassifier	0.7060644095799645	0.024855286997211935	0.7182268142620566
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7500436122117267
+
+random_forest	0.7500436122117267	0.014803854443661843	0.7433371775631029
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.44421946119436073
+
+svc	0.44421946119436073	0.014445108993039682	0.4109736680112935
+Vectorizertfidf, ngrams=(1,2), features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7806555610592372
+
+logistic_regression	0.7806555610592372	0.017096416261037434	0.7910683994994326
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.5375960056764354
+
+k-nn	0.5375960056764354	0.013717933829975888	0.5429541811829969
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7014969290516366
+
+DecisionTreeClassifier	0.7014969290516366	0.007856951307765774	0.7148343767113514
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7475187712497766
+
+random_forest	0.7475187712497766	0.021443208502162282	0.7458124571527395
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4442853787190321
+
+svc	0.4442853787190321	0.019673860623619085	0.4109736680112935
+Vectorizertfidf, ngrams=(1,2), , features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6873688934585884
+
+logistic_regression	0.6873688934585884	0.01687393259318491	0.6646387166955445
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6017394653622401
+
+k-nn	0.6017394653622401	0.040223729813955424	0.6228452529962683
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6959226070782352
+
+DecisionTreeClassifier	0.6959226070782352	0.01464352460340903	0.6390263991162066
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.696410523837179
+
+random_forest	0.696410523837179	0.02032348474657016	0.6586282618596622
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.44453779012411676
+
+svc	0.44453779012411676	0.033595865693507566	0.4109736680112935
+Vectorizertfidf, min_df=0.05
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4442722416014818
+
+logistic_regression	0.4442722416014818	0.01989789271754663	0.4109736680112935
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4776842029605586
+
+k-nn	0.4776842029605586	0.026368551333686048	0.41428593499381894
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.44649431149852925
+
+DecisionTreeClassifier	0.44649431149852925	0.020467678537515348	0.41428593499381894
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4469517582655114
+
+random_forest	0.4469517582655114	0.024074260171486044	0.41428593499381894
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4446062194909146
+
+svc	0.4446062194909146	0.025914818771815486	0.4109736680112935
+Vectorizerbow
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7860704670640376
+
+logistic_regression	0.7860704670640376	0.01078057272238831	0.7888693284076022
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.610157948836396
+
+k-nn	0.610157948836396	0.02159045248299874	0.5887043956346614
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7289059973790757
+
+DecisionTreeClassifier	0.7289059973790757	0.012819509630154609	0.7238753942345474
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7492379896620632
+
+random_forest	0.7492379896620632	0.016239871600058145	0.7498814929694281
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.44426417023265785
+
+svc	0.44426417023265785	0.019230353331757193	0.4109736680112935
+Vectorizerbow, features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.783909795386346
+
+logistic_regression	0.783909795386346	0.01885748105618712	0.7899614307691039
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6092859681606994
+
+k-nn	0.6092859681606994	0.029086370018260626	0.582893943638137
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.720510430687735
+
+DecisionTreeClassifier	0.720510430687735	0.03022936842083321	0.7282223956700747
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7534931612248214
+
+random_forest	0.7534931612248214	0.022057660712400853	0.7402000675343959
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.44434309352652146
+
+svc	0.44434309352652146	0.023630955788471346	0.4109736680112935
+Vectorizerbow, ngrams=(1,2), features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.785796074676718
+
+logistic_regression	0.785796074676718	0.02097494104605583	0.7791887114096347
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6022356898495883
+
+k-nn	0.6022356898495883	0.024459151624355732	0.5838631774078838
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.719263696378757
+
+DecisionTreeClassifier	0.719263696378757	0.018380520182837912	0.7162078421157407
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7465010897945481
+
+random_forest	0.7465010897945481	0.024651147993885396	0.7456376289225859
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.44430615120259287
+
+svc	0.44430615120259287	0.020859592701746917	0.4109736680112935
+Vectorizerbow, ngrams=(1,2), , features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7067173283792652
+
+logistic_regression	0.7067173283792652	0.018081009510951287	0.6706559602092222
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.616369788434327
+
+k-nn	0.616369788434327	0.05329691300236369	0.5693332253899414
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.689827314252727
+
+DecisionTreeClassifier	0.689827314252727	0.023993503820533866	0.6458437297686597
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6970025340362064
+
+random_forest	0.6970025340362064	0.015964502941549524	0.6582746797517318
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4442384410557413
+
+svc	0.4442384410557413	0.01616478163758526	0.4109736680112935
+Vectorizerbow, min_df=0.05
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4505911857803776
+
+logistic_regression	0.4505911857803776	0.027144663269822716	0.4152407824182968
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4383536487407686
+
+k-nn	0.4383536487407686	0.07029990372130032	0.47102177199645784
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4492186664312078
+
+DecisionTreeClassifier	0.4492186664312078	0.027673264204312733	0.4168800505223288
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.45219431616667627
+
+random_forest	0.45219431616667627	0.02137416407757628	0.41428593499381894
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.44976387180072636
+
+svc	0.44976387180072636	0.022470165827808152	0.41851464671939137
+Column: stemming
+Vectorizerbert
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7692681266480225
+
+logistic_regression	0.7692681266480225	0.023510521213462567	0.7605983539717234
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7315397031887002
+
+k-nn	0.7315397031887002	0.025157130843359094	0.741536610430011
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6454332347365882
+
+DecisionTreeClassifier	0.6454332347365882	0.014092169324065311	0.6439417950464142
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7152404018673151
+
+random_forest	0.7152404018673151	0.02118261204993326	0.7091013354773115
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7427068067044602
+
+svc	0.7427068067044602	0.026876319420945524	0.7454534175954665
+Vectorizerdoc2vec
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7529155150713164
+
+logistic_regression	0.7529155150713164	0.019707648216026268	0.7221468935729971
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7427143117185909
+
+k-nn	0.7427143117185909	0.024399140647943244	0.7069297742656109
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6287270156321974
+
+DecisionTreeClassifier	0.6287270156321974	0.01162838806434701	0.6229968233525293
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6880721538000049
+
+random_forest	0.6880721538000049	0.015561347268656453	0.6548469023869598
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7589354280586361
+
+svc	0.7589354280586361	0.025770770277415714	0.7169119689012474
+Vectorizertfidf
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.78001355561865
+
+logistic_regression	0.78001355561865	0.021812768214506742	0.7853703290521936
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7439722639601324
+
+k-nn	0.7439722639601324	0.014671293188300549	0.7292917564189773
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7066947078471414
+
+DecisionTreeClassifier	0.7066947078471414	0.015272859886581164	0.7027317775593404
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7498300346541605
+
+random_forest	0.7498300346541605	0.018793015267056973	0.7521660706876848
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4443235998494518
+
+svc	0.4443235998494518	0.02278981422269819	0.4109736680112935
+Vectorizertfidf, features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7840183123921204
+
+logistic_regression	0.7840183123921204	0.01508960549657715	0.7842207219851535
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7354389394785852
+
+k-nn	0.7354389394785852	0.024275255949982335	0.7256714248122895
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7107636782517456
+
+DecisionTreeClassifier	0.7107636782517456	0.018743761177359028	0.724281371194506
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7436865323314936
+
+random_forest	0.7436865323314936	0.017811687661889702	0.7458063076531101
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.44439416361831185
+
+svc	0.44439416361831185	0.026731312832020005	0.4109736680112935
+Vectorizertfidf, ngrams=(1,2), features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7840402747311418
+
+logistic_regression	0.7840402747311418	0.018619211622048396	0.7895598680878764
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.581810042167894
+
+k-nn	0.581810042167894	0.0742678319480405	0.5437424434475607
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7072989687684212
+
+DecisionTreeClassifier	0.7072989687684212	0.015975877573775686	0.7130121481705363
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7480648688624024
+
+random_forest	0.7480648688624024	0.013613945029724944	0.7481441500836298
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4444778372455603
+
+svc	0.4444778372455603	0.031057355961753283	0.4109736680112935
+Vectorizertfidf, ngrams=(1,2), , features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6905031252577156
+
+logistic_regression	0.6905031252577156	0.023109459186572458	0.6703861186564094
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6265409430283073
+
+k-nn	0.6265409430283073	0.01808007522881183	0.6286922869508551
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6986664213280405
+
+DecisionTreeClassifier	0.6986664213280405	0.020457701112558378	0.6449769308212328
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6993709373399675
+
+random_forest	0.6993709373399675	0.02553668727107065	0.666558709058964
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4446131577295058
+
+svc	0.4446131577295058	0.03833371135159211	0.4109736680112935
+Vectorizertfidf, min_df=0.05
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4442858732957524
+
+logistic_regression	0.4442858732957524	0.020765397391897967	0.4109736680112935
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.43769628066246086
+
+k-nn	0.43769628066246086	0.06543550959339837	0.4109736680112935
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.44848769058823273
+
+DecisionTreeClassifier	0.44848769058823273	0.019474419515006752	0.41428593499381894
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4482141996574248
+
+random_forest	0.4482141996574248	0.030634907610407623	0.41428593499381894
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.44444418969950006
+
+svc	0.44444418969950006	0.029324374754617983	0.4109736680112935
+Vectorizerbow
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.78368040657166
+
+logistic_regression	0.78368040657166	0.011562875916784622	0.7889691554133464
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6229152334496177
+
+k-nn	0.6229152334496177	0.028033783990146752	0.6051716120898349
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7226259377146593
+
+DecisionTreeClassifier	0.7226259377146593	0.008849916969775105	0.7223146731514601
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7490456323617438
+
+random_forest	0.7490456323617438	0.013491861633494766	0.7271533553799004
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.444266679336089
+
+svc	0.444266679336089	0.01816454518630791	0.4109736680112935
+Vectorizerbow, features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.784940331130685
+
+logistic_regression	0.784940331130685	0.019676845159284764	0.7876702635719268
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6302686803818395
+
+k-nn	0.6302686803818395	0.019761720326051203	0.6153773877629463
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7246557013118873
+
+DecisionTreeClassifier	0.7246557013118873	0.015176172505349066	0.7065843926701005
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7450234029595182
+
+random_forest	0.7450234029595182	0.01527224417207683	0.7446007947922514
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4443737845567222
+
+svc	0.4443737845567222	0.02602684741608761	0.4109736680112935
+Vectorizerbow, ngrams=(1,2), features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7849160351022393
+
+logistic_regression	0.7849160351022393	0.021420724759404843	0.7898646661326876
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.6085677025444205
+
+k-nn	0.6085677025444205	0.03768628829078273	0.5856623116295208
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7136145640634378
+
+DecisionTreeClassifier	0.7136145640634378	0.018847871591721688	0.7091100098017414
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7486518490555172
+
+random_forest	0.7486518490555172	0.013486970886888711	0.7348107854217135
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.44440558401676195
+
+svc	0.44440558401676195	0.026763691690917305	0.4109736680112935
+Vectorizerbow, ngrams=(1,2), , features=5000
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7110955822138207
+
+logistic_regression	0.7110955822138207	0.02280818147218384	0.6780683349559874
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.621471995176892
+
+k-nn	0.621471995176892	0.04737479370796024	0.5744988156586155
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.703864679089764
+
+DecisionTreeClassifier	0.703864679089764	0.019493242274889744	0.6516570846812112
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.7014117846110056
+
+random_forest	0.7014117846110056	0.012606855327352673	0.6620578007224264
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4443310747465966
+
+svc	0.4443310747465966	0.023847765336241087	0.4109736680112935
+Vectorizerbow, min_df=0.05
+Estimator	Mean f1-score	Std f1-score	Test-score
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4525924006333719
+
+logistic_regression	0.4525924006333719	0.022166829283356195	0.41394152725677386
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.45111955859814995
+
+k-nn	0.45111955859814995	0.06028654342185934	0.4733049469238401
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4473526550372153
+
+DecisionTreeClassifier	0.4473526550372153	0.015673772853529576	0.4172297593488469
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4512023019707594
+
+random_forest	0.4512023019707594	0.031252041870738705	0.4172297593488469
+Start 10-folds cross validation...
+End cross validation, f1_weighted=0.4486181245929079
+
+svc	0.4486181245929079	0.018209637997260993	0.4152407824182968
+End execution
