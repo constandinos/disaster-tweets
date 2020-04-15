@@ -390,17 +390,16 @@ def step1_find_best_for_columns(columns, X_train, Y_train, X_test, Y_test):
         train_text = X_train[column].to_list()
         test_text = X_test[column].astype(str).to_list()
 
-        if (column != 'lemmatization'):
-            #Bert
-            bert_train_features = fc.bert_feature_creation(train_text)
-            bert_test_features = fc.bert_feature_creation(test_text)
-            get_scores(bert_train_features, Y_train, bert_test_features, Y_test, 'bert')
+        #Bert
+        bert_train_features = fc.bert_feature_creation(train_text)
+        bert_test_features = fc.bert_feature_creation(test_text)
+        get_scores(bert_train_features, Y_train, bert_test_features, Y_test, 'bert')
 
-            #Doc2Vec
-            doc2vec_train_model = fc.train_doc2vec_model(train_text)
-            doc2vec_train_features = fc.doc2vec_feature_creation(doc2vec_train_model, train_text)
-            doc2vec_test_features = fc.doc2vec_feature_creation(doc2vec_train_model, test_text)
-            get_scores(doc2vec_train_features, Y_train, doc2vec_test_features, Y_test, 'doc2vec')
+        #Doc2Vec
+        doc2vec_train_model = fc.train_doc2vec_model(train_text)
+        doc2vec_train_features = fc.doc2vec_feature_creation(doc2vec_train_model, train_text)
+        doc2vec_test_features = fc.doc2vec_feature_creation(doc2vec_train_model, test_text)
+        get_scores(doc2vec_train_features, Y_train, doc2vec_test_features, Y_test, 'doc2vec')
 
         #TFIDF
         tfidf_train_features, tfidf_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=True)
@@ -456,7 +455,7 @@ def step2_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test):
     """
     # We chose these two machine learning algorithms for further checking.
     clf_list = [("logistic_regression", LogisticRegression(), {'C': np.logspace(-4, 4, 20),\
-                                                               'max_iter': [100, 200, 300, 400, 500]}),
+                                                               'max_iter': [50, 100, 150, 200]}),
                 ("svc", SVC(), {'C': [0.1, 1, 10, 100, 1000], \
                                 'gamma': [0.001, 0.01, 0.1, 1],\
                                 'kernel': ['rbf', 'linear', 'sigmoid']})]
@@ -510,12 +509,12 @@ def step3_further_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test):
     # Best machine learning algorithm from STEP2 
     clf_list = [("logistic_regression",\
                  LogisticRegression(),\
-                 {'C': np.logspace(-4, 4, 20),\
-                  'max_iter': [100, 200, 300, 400, 500],\
+                 {'C': np.logspace(-4, 1, 20),\
+                  'max_iter': [50, 100, 150, 200],\
                   'solver': ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga'],\
                   'multi_class': ['auto', 'ovr', 'multinomial']})]
 
-    best_column = None
+    best_column = 'ekphrasis'
     best_vectorizer = None
     best_ml_algorithm = None
     # best column + Best vectorizer + Best machine learning algorithm
@@ -552,7 +551,6 @@ if __name__ == "__main__":
 
     ### STEP1 - Find best vectorizer for each column alongside their ml algorithm
     columns = ['text', 'processed', 'lemmatization', 'stemming', 'no_punk_no_abb', 'ekphrasis', 'ekphrasis_rm', 'ekphrasis_stemming', 'ekphrasis_no_symtags']
-    columns = ['lemmatization', 'stemming', 'no_punk_no_abb', 'ekphrasis', 'ekphrasis_rm', 'ekphrasis_stemming', 'ekphrasis_no_symtags']
     X_train = train_df.astype(str)
     X_test = test_df.astype(str)
     Y_train = train_df['target'].astype(str)
@@ -566,6 +564,7 @@ if __name__ == "__main__":
     ### STEP3 - Prepend to the column with the best result from STEP2 the keywords
     # and the locations (try to prepend only the keywords, only the locations and
     # both)
+    #step3_further_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test)
 
     ### STEP4 - Try gridsearch with more parameters on the best result from STEP3
 
