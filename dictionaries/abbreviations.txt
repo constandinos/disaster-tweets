@@ -4479,7 +4479,6 @@ nbg	no bloody good
 nbif	no basis in fact
 nblfy	nothing but love for you
 nbs	no bull shit
-nc	not cool
 ncaa	national collegiate athletic association
 ncg	new college graduate
 ncs	no crap sherlock
@@ -4640,7 +4639,6 @@ noodz	nude pictures
 nookie	sex
 nop	normal operating procedure
 norf	norfolk
-north	northern (dialect)
 northamptonsh	northamptonshire
 northants	northamptonshire
 northumb	northumberland, northumbrian
@@ -5241,7 +5239,6 @@ pop	popular
 popo	police
 poq	piss off quick
 porc	porcelain
-port	portuguese
 pos	parent over shoulder
 posc	piece of shit computer
 poscs	parents over sholder change subject
@@ -5737,7 +5734,6 @@ ryo	roll your own
 rys	read your screen
 ryt	right
 ryte	right
-s	smile
 s afr	south africa(n)
 s carolina	south carolina
 s dakota	south dakota
@@ -5785,7 +5781,6 @@ sbs	such bull shit
 sbt	sorry bout that
 sbta	sorry, being thick again
 sbug	small bald unaudacious goal
-sc	scilicet, ‘understand’ or ‘supply’
 scand	scandinavia, scandinavian
 sch	school
 sci	science(s), scientific
@@ -6857,6 +6852,7 @@ urws	you are wise
 uryy4m	you are too wise for me
 uryyfm	you are too wise for me
 urz	yours
+usa	united states
 us	united states
 u.s	united states
 usaf	united states air force
