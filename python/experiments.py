@@ -21,7 +21,7 @@ def grid_search_cross_validation(clf_list, x_train, y_train, x_test, y_test, k_f
     values for an estimator to find the optimal parameters for a machine 
     learning algorithm.
 	Also, this function will apply k-folds cross validation to calculate the 
-    average f1_macro score in order to select the machine learning algorithm 
+    average f1_weighted score in order to select the machine learning algorithm 
     with highest score.
 
 	Parameters
@@ -48,9 +48,11 @@ def grid_search_cross_validation(clf_list, x_train, y_train, x_test, y_test, k_f
 	model_std: list of floats
 		This list contains the cross validation standard deviations of machine 
         learning algorithms
+    test_scores: list of floats
+        This list contains the evaluation score on the test data
    """
 
-    model_names, model_scores, model_std = [], [], []  # return list
+    model_names, model_scores, model_std, test_scores = [], [], [], []  # return list
     kfold = model_selection.KFold(n_splits=k_folds, shuffle=True)
     #kfold = model_selection.StratifiedKFold(n_splits=k_folds, shuffle=True)
     for name, model, parameters in clf_list:
@@ -70,14 +72,15 @@ def grid_search_cross_validation(clf_list, x_train, y_train, x_test, y_test, k_f
 
         y_pred = best_est.predict(x_test)
         test_score = f1_score(y_test, y_pred, average='weighted')
+        test_scores.append(test_score)
 
-    return model_names, model_scores, model_std
+    return model_names, model_scores, model_std, test_scores
 
 
 def cross_validation(estimator, x_train, y_train, k_folds=10, score_type='f1_weighted'):
     """
 	This function will apply k-folds cross validation to calculate the average
-	f1_macro score in order to select the machine learning algorithm with 
+	f1_weighted score in order to select the machine learning algorithm with 
     highest score.
 
 	Parameters
@@ -155,7 +158,7 @@ def plot_graphs(title_name, column_name, labels, f1_score, std):
 
 
 # =============================================================================#
-#                             Execution on data                                #
+#                           Execution on data (EXPERIMENTS)                    #
 # =============================================================================#
 
 from sklearn.model_selection import train_test_split
@@ -177,7 +180,12 @@ def reports(features, labels, model, pca):
     print(classification_report(test_labels, y_pred))
 """
 
+"""
 def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
+    # This function was used in early stages, so it might not be helpfull now.
+    # It took to much time to run all those gridsearch experiments so we aborted
+    # this approach. This function might have some erros if you uncomment it.
+    
     clf_list = [("logistic_regression", LogisticRegression(), {'C': np.logspace(-4, 4, 20),\
                                                                'max_iter': [100, 200, 300, 400, 500]}),
                 ("k-nn", KNeighborsClassifier(), {'n_neighbors': np.arange(1, 25),  \
@@ -239,6 +247,7 @@ def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
             print("----------------------------------------------------\n")
 
         print("****************************************************\n")
+"""
 
 def predict_results(train_df, test_df,text_col):
     x_train = list(train_df[text_col])
@@ -268,7 +277,11 @@ def predict_results(train_df, test_df,text_col):
     submission['target'] = y_pred
     submission.to_csv('submission.csv', index=False)
 
+
 def choose_best_vectorizer(df):
+    """
+    This function is not used anymore.
+    """
     process_columns = ['text','processed','lemmatization','stemming']
     estimators = [LogisticRegression(),
                   KNeighborsClassifier(),
@@ -322,11 +335,62 @@ def choose_best_vectorizer(df):
         print("Best of bow:"+str(name_estimators[max_index])+" with score "+str(bow_scores[max_index]))
         print("-----------")
 
-def hyper_parameters_tuning(X_train, Y_train, X_test, Y_test):
-    
-    train_text = X_train['processed'].to_list()
-    test_text = X_test['column'].to_list()
 
+def hyper_parameters_tuning(X_train, Y_train, X_test, Y_test):
+    """
+    This function is used to find the best hyperparameters for the vectorizers,
+    machinelearning algorithms and columns that we have chossen previously.
+    """
+    # We choose these two machine learning algorithms for further checking.
+    clf_list = [("logistic_regression", LogisticRegression(), {'C': np.logspace(-4, 4, 20),\
+                                                               'max_iter': [100, 200, 300, 400, 500]}),
+                ("svc", SVC(), {'C': [0.1, 1, 10, 100, 1000], \
+                                'gamma': [0.001, 0.01, 0.1, 1],\
+                                'kernel': ['rbf', 'linear', 'sigmoid']})]
+
+    # Grid search for processed column with tfidf vectorizer (default)
+    train_text = X_train['processed'].to_list()
+    test_text = X_test['processed'].to_list()
+
+    tfidf_train_features, tfidf_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=True)
+    tfidf_test_features = tfidf_train_vectorizer.transform(test_text)
+    model_names, model_scores, model_std, test_scores = grid_search_cross_validation(clf_list, tfidf_train_features, Y_train, tfidf_test_features, Y_test)
+
+    for i in range(0,len(model_names)):
+        print(str(model_names[i])+"\t"+str(model_scores[i])+"\t"+str(model_std[i])+"\t"+str(test_scores[i]))
+
+    # Grid search for stemming column with tfidf vectorizer (max_features=5000)
+    train_text = X_train['stemming'].to_list()
+    test_text = X_test['stemming'].to_list()
+
+    tfidf_train_features, tfidf_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=True, max_features=5000)
+    tfidf_test_features = tfidf_train_vectorizer.transform(test_text)
+    model_names, model_scores, model_std, test_scores = grid_search_cross_validation(clf_list, tfidf_train_features, Y_train, tfidf_test_features, Y_test)
+
+    for i in range(0,len(model_names)):
+        print(str(model_names[i])+"\t"+str(model_scores[i])+"\t"+str(model_std[i])+"\t"+str(test_scores[i]))
+
+    # Grid search for ekphrasis column with bert
+    train_text = X_train['ekphrasis'].to_list()
+    test_text = X_test['ekphrasis'].to_list()
+
+    bert_train_features = fc.bert_feature_creation(train_text)
+    bert_test_features = fc.bert_feature_creation(test_text)
+    model_names, model_scores, model_std, test_scores = grid_search_cross_validation(clf_list, bert_train_features, Y_train, bert_test_features, Y_test)
+
+    for i in range(0,len(model_names)):
+        print(str(model_names[i])+"\t"+str(model_scores[i])+"\t"+str(model_std[i])+"\t"+str(test_scores[i]))
+
+    # Grid search for ekphrasis_rm column with bert
+    train_text = X_train['ekphrasis_rm'].to_list()
+    test_text = X_test['ekphrasis_rm'].to_list()
+
+    bert_train_features = fc.bert_feature_creation(train_text)
+    bert_test_features = fc.bert_feature_creation(test_text)
+    model_names, model_scores, model_std, test_scores = grid_search_cross_validation(clf_list, bert_train_features, Y_train, bert_test_features, Y_test)
+
+    for i in range(0,len(model_names)):
+        print(str(model_names[i])+"\t"+str(model_scores[i])+"\t"+str(model_std[i])+"\t"+str(test_scores[i]))
 
 
 def get_scores(X_train, Y_train, X_test, Y_test, vectorizer_name):
@@ -354,7 +418,12 @@ def get_scores(X_train, Y_train, X_test, Y_test, vectorizer_name):
         print(str(mean_score)+"\t"+str(std_score)+"\t"+str(test_score), end = '\t')
     print()
 
+
 def find_best_for_columns(columns, X_train, Y_train, X_test, Y_test):
+    """
+    This function is used to find the best vectorizer for each column and the
+    best machine learning algorithm.
+    """
     for column in columns:
         print("\nColumn: " + column + '\n')
         train_text = X_train[column].to_list()
@@ -416,19 +485,43 @@ def find_best_for_columns(columns, X_train, Y_train, X_test, Y_test):
         bow_train_features, bow_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=False, min_df=0.05)
         bow_test_features = bow_train_vectorizer.transform(test_text)
         get_scores(bow_train_features, Y_train, bow_test_features, Y_test, 'bow, min_df=0.05')
+        
+
+def split_train_test(df):
+    """
+    This function will split the given dataset to train and test and it will
+    write the result to two files named our_train.csv and our_test.csv
+    This function was called before our experiments to split the known dataset
+    to train and test.
+    """
+    rows_train, rows_test= train_test_split(df, test_size=0.2, shuffle=True)
+
+    rows_train.to_csv('our_train.csv', index=False)
+    rows_test.to_csv('our_test.csv', index=False)
+
+    print(rows_train.shape,rows_test.shape)
 
 if __name__ == "__main__":
 # this won't be run when imported
+
+    ## Split initial dataset
+    # !!!! DO NOT RUN THIS FUNCTION YOU WILL LOSE OUR SPLIT (SPLIT IS RANDOM)
+    #tweet_df = pd.read_csv('dataset/train_dropduplicates_all.csv')
+    #split_train_test(tweet_df)
+    
+
     ## Read datasets
-    tweet_df = pd.read_csv('dataset/train_dropduplicates.csv')
-    #test_df = pd.read_csv('dataset/test_processed.csv')
+    tweet_df = pd.read_csv('dataset/train_dropduplicates_all.csv')
     print("Number of tweets, features:", tweet_df.shape)
+
+    #test_df = pd.read_csv('dataset/test_processed.csv') # TEST FROM KAGGLE
     #print("Number of test, features:", test_df.shape)
     
-    columns = ['text', 'processed', 'lemmatization', 'lemmatization']
+    columns = ['text', 'processed', 'ekphrasis', 'ekphrasis_rm', 'stemming']
     X_train, X_test, Y_train, Y_test = train_test_split(tweet_df, tweet_df['target'], test_size=0.2, shuffle=True)
 
     find_best_for_columns(columns, X_train, Y_train, X_test, Y_test)
+    """
 
 
 
@@ -438,30 +531,9 @@ if __name__ == "__main__":
 
 
 
-
-
-# =============================================================================#
-#                          Choose Best Vectorizer                              #
-# =============================================================================#
-# At this point of our experiments we decided that we have to choose the best
-# vectorizer among the TFIDF and COUNT vectorizers (a.k.a bag of words).
-# For choosing the best vectorizer we have tried to find the best hyper params
-# for these vectorizers and choose one of the TFIDF and COUNT along side with
-# their best hyper parameters.
-# The hyper parameters that we have explored are:
-# 1. ngram_range : (1,1) , (1,2) , (2,2)
-#   Reason: From our EDA analysis we have seen that tweeter's most common length
-#   is between 10 to 20, so trying to increase ngrams will not help at all.
-# 2. max_df : 0.80 , 0.90, 1.0
-#   Reason: If there is a word that appears in more than the choosen percent of 
-#   the documents then this word might confuse our estimator. To reduce this 
-#   confusion we have decided to check for some reasonable percentages.
     
     #choose_best_vectorizer(tweet_df)
     
-
-
-
 
 
     #execute(tweet_df, bert=True, doc2vec=False, tfidf=False, bow=False)
