@@ -15,7 +15,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score
 from sklearn.tree import DecisionTreeClassifier
 
-def grid_search_cross_validation(clf_list, x_train, y_train, k_folds=10, score_type='f1_macro'):
+def grid_search_cross_validation(clf_list, x_train, y_train, x_test, y_test, k_folds=10, score_type='f1_weighted'):
     """
 	This function will apply grid search to search over specified parameter 
     values for an estimator to find the optimal parameters for a machine 
@@ -67,6 +67,9 @@ def grid_search_cross_validation(clf_list, x_train, y_train, k_folds=10, score_t
         model_names.append(name)
         model_scores.append(f1_mean)
         model_std.append(f1_std)
+
+        y_pred = best_est.predict(x_test)
+        test_score = f1_score(y_test, y_pred, average='weighted')
 
     return model_names, model_scores, model_std
 
@@ -265,7 +268,6 @@ def predict_results(train_df, test_df,text_col):
     submission['target'] = y_pred
     submission.to_csv('submission.csv', index=False)
 
-
 def choose_best_vectorizer(df):
     process_columns = ['text','processed','lemmatization','stemming']
     estimators = [LogisticRegression(),
@@ -320,6 +322,12 @@ def choose_best_vectorizer(df):
         print("Best of bow:"+str(name_estimators[max_index])+" with score "+str(bow_scores[max_index]))
         print("-----------")
 
+def hyper_parameters_tuning(X_train, Y_train, X_test, Y_test):
+    
+    train_text = X_train['processed'].to_list()
+    test_text = X_test['column'].to_list()
+
+
 
 def get_scores(X_train, Y_train, X_test, Y_test, vectorizer_name):
     estimators = [LogisticRegression(),
@@ -348,7 +356,7 @@ def get_scores(X_train, Y_train, X_test, Y_test, vectorizer_name):
 
 def find_best_for_columns(columns, X_train, Y_train, X_test, Y_test):
     for column in columns:
-        print("Column: " + column + '\n')
+        print("\nColumn: " + column + '\n')
         train_text = X_train[column].to_list()
         test_text = X_test[column].to_list()
 
@@ -417,7 +425,7 @@ if __name__ == "__main__":
     print("Number of tweets, features:", tweet_df.shape)
     #print("Number of test, features:", test_df.shape)
     
-    columns = ['text', 'processed', 'lemmatization', 'stemming']
+    columns = ['text', 'processed', 'lemmatization', 'lemmatization']
     X_train, X_test, Y_train, Y_test = train_test_split(tweet_df, tweet_df['target'], test_size=0.2, shuffle=True)
 
     find_best_for_columns(columns, X_train, Y_train, X_test, Y_test)
