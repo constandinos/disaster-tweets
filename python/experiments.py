@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import feature_creation as fc
 
-
 # =============================================================================#
 #                     Grid Search and Cross Validation                         #
 # =============================================================================#
@@ -14,7 +13,7 @@ from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score
-
+from sklearn.tree import DecisionTreeClassifier
 
 def grid_search_cross_validation(clf_list, x_train, y_train, k_folds=10, score_type='f1_macro'):
     """
@@ -105,12 +104,12 @@ def cross_validation(estimator, x_train, y_train, k_folds=10, score_type='f1_wei
     kfold = model_selection.KFold(n_splits=k_folds, shuffle=True)
     
     # k-fold cross validation
-    print("Start "+str(k_folds)+"-folds cross validation...")
+    #print("Start "+str(k_folds)+"-folds cross validation...")
     f1_score = model_selection.cross_val_score(estimator, x_train, y_train, cv=kfold, scoring=score_type, n_jobs=-1)
     # append results to the return lists
     estimator_score = f1_score.mean()
     estimator_std = f1_score.std()
-    print("End cross validation, "+score_type+"="+str(f1_score.mean())+"\n")
+    #print("End cross validation")
 
     return estimator_score, estimator_std
 
@@ -325,17 +324,18 @@ def choose_best_vectorizer(df):
 def get_scores(X_train, Y_train, X_test, Y_test, vectorizer_name):
     estimators = [LogisticRegression(),
                   KNeighborsClassifier(),
-                  #MLPClassifier(),
+                  DecisionTreeClassifier(),
                   RandomForestClassifier(),
                   SVC()]
     name_estimators = ["logistic_regression",
                        "k-nn",
-                       #"mlp",
+                       "DecisionTreeClassifier",
                        "random_forest",
                        "svc"]
 
-    print("Vectorizer"+str(vectorizer_name))
-    print("Estimator\tMean f1-score\tStd f1-score\tTest-score")
+    #print("Vectorizer"+str(vectorizer_name))
+    #print("Estimator\tMean f1-score\tStd f1-score\tTest-score")
+    print(str(vectorizer_name), end = '\t')
     for estimator, estimator_name in zip(estimators, name_estimators):
         mean_score, std_score = cross_validation(estimator, X_train, Y_train)
 
@@ -343,15 +343,71 @@ def get_scores(X_train, Y_train, X_test, Y_test, vectorizer_name):
         Y_pred = estimator.predict(X_test)
         test_score = f1_score(Y_test,Y_pred, average='weighted')
 
-        print(estimator_name+"\t"+str(mean_score)+"\t"+str(std_score)+"\t"+str(test_score))
+        print(str(mean_score)+"\t"+str(std_score)+"\t"+str(test_score), end = '\t')
+    print()
 
 def find_best_for_columns(columns, X_train, Y_train, X_test, Y_test):
-    
-
     for column in columns:
-        pass
+        print("Column: " + column + '\n')
+        train_text = X_train[column].to_list()
+        test_text = X_test[column].to_list()
 
+        #Bert
+        bert_train_features = fc.bert_feature_creation(train_text)
+        bert_test_features = fc.bert_feature_creation(test_text)
+        get_scores(bert_train_features, Y_train, bert_test_features, Y_test, 'bert')
 
+        #Doc2Vec
+        doc2vec_train_model = fc.train_doc2vec_model(train_text)
+        doc2vec_train_features = fc.doc2vec_feature_creation(doc2vec_train_model, train_text)
+        doc2vec_test_features = fc.doc2vec_feature_creation(doc2vec_train_model, test_text)
+        get_scores(doc2vec_train_features, Y_train, doc2vec_test_features, Y_test, 'doc2vec')
+
+        #TFIDF
+        tfidf_train_features, tfidf_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=True)
+        tfidf_test_features = tfidf_train_vectorizer.transform(test_text)
+        get_scores(tfidf_train_features, Y_train, tfidf_test_features, Y_test, 'tfidf')
+
+        tfidf_train_features, tfidf_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=True, max_features=5000)
+        tfidf_test_features = tfidf_train_vectorizer.transform(test_text)
+        get_scores(tfidf_train_features, Y_train, tfidf_test_features, Y_test, 'tfidf, features=5000')
+
+        tfidf_train_features, tfidf_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=True, ngram_range=(1,2),\
+                                                                           max_features=5000)
+        tfidf_test_features = tfidf_train_vectorizer.transform(test_text)
+        get_scores(tfidf_train_features, Y_train, tfidf_test_features, Y_test, 'tfidf, ngrams=(1,2), features=5000')
+
+        tfidf_train_features, tfidf_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=True, ngram_range=(2,2),\
+                                                                           max_features=5000)
+        tfidf_test_features = tfidf_train_vectorizer.transform(test_text)
+        get_scores(tfidf_train_features, Y_train, tfidf_test_features, Y_test, 'tfidf, ngrams=(2,2), features=5000')
+
+        tfidf_train_features, tfidf_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=True, min_df=0.05)
+        tfidf_test_features = tfidf_train_vectorizer.transform(test_text)
+        get_scores(tfidf_train_features, Y_train, tfidf_test_features, Y_test, 'tfidf, min_df=0.05')
+
+        #Bow
+        bow_train_features, bow_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=False)
+        bow_test_features = bow_train_vectorizer.transform(test_text)
+        get_scores(bow_train_features, Y_train, bow_test_features, Y_test, 'bow')
+
+        bow_train_features, bow_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=False, max_features=5000)
+        bow_test_features = bow_train_vectorizer.transform(test_text)
+        get_scores(bow_train_features, Y_train, bow_test_features, Y_test, 'bow, features=5000')
+
+        bow_train_features, bow_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=False, ngram_range=(1, 2), \
+                                                                           max_features=5000)
+        bow_test_features = bow_train_vectorizer.transform(test_text)
+        get_scores(bow_train_features, Y_train, bow_test_features, Y_test, 'bow, ngrams=(1,2), features=5000')
+
+        bow_train_features, bow_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=False, ngram_range=(2, 2), \
+                                                                           max_features=5000)
+        bow_test_features = bow_train_vectorizer.transform(test_text)
+        get_scores(bow_train_features, Y_train, bow_test_features, Y_test, 'bow, ngrams=(1,2), , features=5000')
+
+        bow_train_features, bow_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=False, min_df=0.05)
+        bow_test_features = bow_train_vectorizer.transform(test_text)
+        get_scores(bow_train_features, Y_train, bow_test_features, Y_test, 'bow, min_df=0.05')
 
 if __name__ == "__main__":
 # this won't be run when imported
@@ -361,14 +417,11 @@ if __name__ == "__main__":
     print("Number of tweets, features:", tweet_df.shape)
     #print("Number of test, features:", test_df.shape)
     
+    columns = ['text', 'processed', 'lemmatization', 'stemming']
+    X_train, X_test, Y_train, Y_test = train_test_split(tweet_df, tweet_df['target'], test_size=0.2, shuffle=True)
 
-    
+    find_best_for_columns(columns, X_train, Y_train, X_test, Y_test)
 
-    X_train, X_test, Y_train, Y_test = \
-            train_test_split(tweet_df, tweet_df['traget'], test_size=0.2, shuffle=True)
-
-
-    print(X_train.head(10))
 
 
 
