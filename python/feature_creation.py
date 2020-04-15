@@ -574,8 +574,6 @@ def select_n_components(goal_var, X, Y=None, algorithm='PCA'):
 #                                      Test                                    #
 # =============================================================================#
 
-import feature_creation as fc
-
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from sklearn.linear_model import LogisticRegression
@@ -605,7 +603,7 @@ if __name__ == "__main__":
 
 
     print("Running bert...")
-    features = fc.bert_feature_creation(list(tweet_df['processed']))
+    features = bert_feature_creation(list(tweet_df['processed']))
     print("Features created")
 
     reports(features,tweet_df['target'],'BERT')
