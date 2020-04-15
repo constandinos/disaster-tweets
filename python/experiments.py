@@ -15,13 +15,13 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score
 from sklearn.tree import DecisionTreeClassifier
 
-def grid_search_cross_validation(clf_list, x_train, y_train, k_folds=10, score_type='f1_macro'):
+def grid_search_cross_validation(clf_list, x_train, y_train, k_folds=10, score_type='f1_weighted'):
     """
 	This function will apply grid search to search over specified parameter 
     values for an estimator to find the optimal parameters for a machine 
     learning algorithm.
 	Also, this function will apply k-folds cross validation to calculate the 
-    average f1_macro score in order to select the machine learning algorithm 
+    average f1_weighted score in order to select the machine learning algorithm 
     with highest score.
 
 	Parameters
@@ -74,7 +74,7 @@ def grid_search_cross_validation(clf_list, x_train, y_train, k_folds=10, score_t
 def cross_validation(estimator, x_train, y_train, k_folds=10, score_type='f1_weighted'):
     """
 	This function will apply k-folds cross validation to calculate the average
-	f1_macro score in order to select the machine learning algorithm with 
+	f1_weighted score in order to select the machine learning algorithm with 
     highest score.
 
 	Parameters
@@ -408,16 +408,25 @@ def find_best_for_columns(columns, X_train, Y_train, X_test, Y_test):
         bow_train_features, bow_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=False, min_df=0.05)
         bow_test_features = bow_train_vectorizer.transform(test_text)
         get_scores(bow_train_features, Y_train, bow_test_features, Y_test, 'bow, min_df=0.05')
+        
+
 
 if __name__ == "__main__":
 # this won't be run when imported
     ## Read datasets
     tweet_df = pd.read_csv('dataset/train_dropduplicates.csv')
+    tweet_df = pd.read_csv('dataset/train_ekphrasis_dropduplicates.csv')
+
     #test_df = pd.read_csv('dataset/test_processed.csv')
     print("Number of tweets, features:", tweet_df.shape)
     #print("Number of test, features:", test_df.shape)
     
     columns = ['text', 'processed', 'lemmatization', 'stemming']
+    columns = ['ekphrasis','ekphrasis_rm','lemmatization']
+    columns = ['no_punk_no_abb']
+    columns = ['ekphrasis_no_symtags']
+    columns = ['ekphrasis']
+    columns = ['text', 'processed', 'ekphrasis', 'ekphrasis_rm', 'stemming']
     X_train, X_test, Y_train, Y_test = train_test_split(tweet_df, tweet_df['target'], test_size=0.2, shuffle=True)
 
     find_best_for_columns(columns, X_train, Y_train, X_test, Y_test)
