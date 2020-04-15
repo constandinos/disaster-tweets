@@ -597,7 +597,7 @@ if __name__ == "__main__":
     # and the locations (try to prepend only the keywords, only the locations and
     # both) and use the best hyperparameters from STEP3
     #columns = ['ekphrasis', 'keyword_ekphrasis', 'location_ekphrasis', 'keyword_location_ekphrasis'] 
-    #step4_inspect_keywords_locations(column, X_train, Y_train, X_test, Y_test))
+    #step4_inspect_keywords_locations(columns, X_train, Y_train, X_test, Y_test))
 
     ###### END OF EXPERIMENTS
 
