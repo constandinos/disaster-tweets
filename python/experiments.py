@@ -415,7 +415,7 @@ if __name__ == "__main__":
     print("Number of tweets, features:", tweet_df.shape)
     #print("Number of test, features:", test_df.shape)
     
-    columns = ['processed', 'lemmatization', 'stemming']
+    columns = ['text', 'processed', 'lemmatization', 'stemming']
     X_train, X_test, Y_train, Y_test = train_test_split(tweet_df, tweet_df['target'], test_size=0.2, shuffle=True)
 
     find_best_for_columns(columns, X_train, Y_train, X_test, Y_test)
