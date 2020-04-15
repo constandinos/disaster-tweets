@@ -403,7 +403,7 @@ def find_best_for_columns(columns, X_train, Y_train, X_test, Y_test):
         bow_train_features, bow_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=False, ngram_range=(2, 2), \
                                                                            max_features=5000)
         bow_test_features = bow_train_vectorizer.transform(test_text)
-        get_scores(bow_train_features, Y_train, bow_test_features, Y_test, 'bow, ngrams=(1,2), , features=5000')
+        get_scores(bow_train_features, Y_train, bow_test_features, Y_test, 'bow, ngrams=(2,2), features=5000')
 
         bow_train_features, bow_train_vectorizer = fc.train_vectorizer(train_text, tf_idf=False, min_df=0.05)
         bow_test_features = bow_train_vectorizer.transform(test_text)
