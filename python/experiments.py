@@ -590,13 +590,13 @@ if __name__ == "__main__":
     ### STEP2 - Run gridsearch on the best result from STEP1
     #step2_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test)
 
-    ### STEP3 - Try gridsearch with more parameters on the best result from STEP3
-    #columns = ['ekphrasis', 'keyword_ekphrasis', 'location_ekphrasis', 'keyword_location_ekphrasis'] 
+    ### STEP3 - Try gridsearch with more parameters on the best result from STEP2
     step3_further_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test)
 
     ### STEP4 - Prepend to the column with the best result from STEP2 the keywords
     # and the locations (try to prepend only the keywords, only the locations and
-    # both)
+    # both) and use the best hyperparameters from STEP3
+    #columns = ['ekphrasis', 'keyword_ekphrasis', 'location_ekphrasis', 'keyword_location_ekphrasis'] 
     #step4_inspect_keywords_locations(column, X_train, Y_train, X_test, Y_test))
 
     ###### END OF EXPERIMENTS
