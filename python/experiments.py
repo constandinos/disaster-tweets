@@ -13,7 +13,7 @@ from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score
-
+from sklearn.tree import DecisionTreeClassifier
 
 def grid_search_cross_validation(clf_list, x_train, y_train, k_folds=10, score_type='f1_macro'):
     """
@@ -324,12 +324,12 @@ def choose_best_vectorizer(df):
 def get_scores(X_train, Y_train, X_test, Y_test, vectorizer_name):
     estimators = [LogisticRegression(),
                   KNeighborsClassifier(),
-                  #MLPClassifier(),
+                  DecisionTreeClassifier(),
                   RandomForestClassifier(),
                   SVC()]
     name_estimators = ["logistic_regression",
                        "k-nn",
-                       #"mlp",
+                       "DecisionTreeClassifier",
                        "random_forest",
                        "svc"]
 
