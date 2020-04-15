@@ -13,6 +13,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import f1_score
 
 
 def grid_search_cross_validation(clf_list, x_train, y_train, k_folds=10, score_type='f1_macro'):
@@ -71,7 +72,7 @@ def grid_search_cross_validation(clf_list, x_train, y_train, k_folds=10, score_t
     return model_names, model_scores, model_std
 
 
-def cross_validation(estimator, x_train, y_train, k_folds=10, score_type='f1_macro'):
+def cross_validation(estimator, x_train, y_train, k_folds=10, score_type='f1_weighted'):
     """
 	This function will apply k-folds cross validation to calculate the average
 	f1_macro score in order to select the machine learning algorithm with 
@@ -104,7 +105,7 @@ def cross_validation(estimator, x_train, y_train, k_folds=10, score_type='f1_mac
     kfold = model_selection.KFold(n_splits=k_folds, shuffle=True)
     
     # k-fold cross validation
-    print("Start cross validation...")
+    print("Start "+str(k_folds)+"-folds cross validation...")
     f1_score = model_selection.cross_val_score(estimator, x_train, y_train, cv=kfold, scoring=score_type, n_jobs=-1)
     # append results to the return lists
     estimator_score = f1_score.mean()
@@ -297,7 +298,7 @@ def choose_best_vectorizer(df):
         # performance of tfidf with default parameters
         for estimator,name in zip(estimators,name_estimators):
             print("(default)Cross validation for "+name)
-            score,_=cross_validation(estimator, features_reduced_tfidf, Y)
+            score,_=cross_validation(estimator, features_tfidf, Y)
             tfidf_scores.append(score)
         print("------------")
 
@@ -308,7 +309,7 @@ def choose_best_vectorizer(df):
         # performance of bow with default parameters
         for estimator,name in zip(estimators,name_estimators):
             print("(default)Cross validation for "+name)
-            score,_=cross_validation(estimator, features_reduced_bow, Y)
+            score,_=cross_validation(estimator, features_bow, Y)
             bow_scores.append(score)
 
         print("End column: "+col)
@@ -320,17 +321,64 @@ def choose_best_vectorizer(df):
         print("Best of bow:"+str(name_estimators[max_index])+" with score "+str(bow_scores[max_index]))
         print("-----------")
 
-     
+
+def get_scores(X_train, Y_train, X_test, Y_test, vectorizer_name):
+    estimators = [LogisticRegression(),
+                  KNeighborsClassifier(),
+                  #MLPClassifier(),
+                  RandomForestClassifier(),
+                  SVC()]
+    name_estimators = ["logistic_regression",
+                       "k-nn",
+                       #"mlp",
+                       "random_forest",
+                       "svc"]
+
+    print("Vectorizer"+str(vectorizer_name))
+    print("Estimator\tMean f1-score\tStd f1-score\tTest-score")
+    for estimator, estimator_name in zip(estimators, name_estimators):
+        mean_score, std_score = cross_validation(estimator, X_train, Y_train)
+
+        estimator.fit(X_train,Y_train)
+        Y_pred = estimator.predict(X_test)
+        test_score = f1_score(Y_test,Y_pred, average='weighted')
+
+        print(estimator_name+"\t"+str(mean_score)+"\t"+str(std_score)+"\t"+str(test_score))
+
+def find_best_for_columns(columns, X_train, Y_train, X_test, Y_test):
+    
+
+    for column in columns:
+        pass
+
 
 
 if __name__ == "__main__":
 # this won't be run when imported
     ## Read datasets
     tweet_df = pd.read_csv('dataset/train_dropduplicates.csv')
-    test_df = pd.read_csv('dataset/test_processed.csv')
+    #test_df = pd.read_csv('dataset/test_processed.csv')
     print("Number of tweets, features:", tweet_df.shape)
-    print("Number of test, features:", test_df.shape)
+    #print("Number of test, features:", test_df.shape)
     
+
+    
+
+    X_train, X_test, Y_train, Y_test = \
+            train_test_split(tweet_df, tweet_df['traget'], test_size=0.2, shuffle=True)
+
+
+    print(X_train.head(10))
+
+
+
+
+
+
+
+
+
+
 # =============================================================================#
 #                          Choose Best Vectorizer                              #
 # =============================================================================#
@@ -356,6 +404,6 @@ if __name__ == "__main__":
 
 
     #execute(tweet_df, bert=True, doc2vec=False, tfidf=False, bow=False)
-    predict_results(tweet_df, test_df,'processed')
+    #predict_results(tweet_df, test_df,'processed')
 
     print("End execution")
