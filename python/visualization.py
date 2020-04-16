@@ -436,11 +436,10 @@ not_disaster_x1, not_disaster_y1 = zip(*most_freq_keyword_not_disaster)
 not_disaster_y0 = find_correspond_values(most_freq_keyword_disaster, dict_keyword_not_disaster)
 disaster_y1 = find_correspond_values(most_freq_keyword_not_disaster, dict_keyword_disaster)
 plot_group_barh(disaster_x0, disaster_y0, not_disaster_y0, 'Keywords',\
-                    'Most frequent keywords in disaster tweets', 'fig12b_keywords_disasters', rotate=True, degree=90)
+                    'Most frequent keywords in disaster tweets', 'fig12b_keywords_disasters')
 
 plot_group_barh(not_disaster_x1, disaster_y1, not_disaster_y1, 'Keywords',\
-                    'Most frequent keywords in not disaster tweets', 'fig13b_keywords_not_disasters', rotate=True,\
-                    degree=90)
+                    'Most frequent keywords in not disaster tweets', 'fig13b_keywords_not_disasters')
 
 #Graph 14 & 15: Most frequent locations
 all_words_locations_disaster = create_all_fields(1, 'location_processed')
@@ -470,11 +469,10 @@ not_disaster_y0 = find_correspond_values(most_freq_locations_disaster, dict_loca
 disaster_y1 = find_correspond_values(most_freq_locations_not_disaster, dict_locations_disaster)
 
 plot_group_barh(disaster_x0, disaster_y0, not_disaster_y0, 'Locations',\
-                    'Most frequent locations in disaster tweets', 'fig14b_locations_disasters', rotate=True, degree=90)
+                    'Most frequent locations in disaster tweets', 'fig14b_locations_disasters')
 
 plot_group_barh(not_disaster_x1, disaster_y1, not_disaster_y1, 'Locations',\
-                    'Most frequent locations in not disaster tweets', 'fig15b_locations_not_disasters', rotate=True,\
-                    degree=90)
+                    'Most frequent locations in not disaster tweets', 'fig15b_locations_not_disasters')
 
 #Graph 16: URLs
 count_url_disaster = count_urls(1, 'text')
