@@ -534,25 +534,29 @@ def step3_further_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test):
 
 
 def step4_inspect_keywords_locations(columns, X_train, Y_train, X_test, Y_test):
+    best_c = 0.14384498882876628
+    best_max_iter = 50
+    best_solver = 'liblinear'
     for column in columns:
         print("\nColumn: " + column + '\n')
         train_text = X_train[column].astype(str).to_list()
         test_text = X_test[column].astype(str).to_list()
-
+        
         #Bert
         bert_train_features = fc.bert_feature_creation(train_text)
         bert_test_features = fc.bert_feature_creation(test_text)
 
-        estimator = LogisticRegression(C=None, max_iter=None, solver=None, multi_class=None)
+        estimator = LogisticRegression(C=best_c, max_iter=best_max_iter, solver=best_solver)
 
         
         mean_score, std_score = cross_validation(estimator, bert_train_features, Y_train)
 
-        estimator.fit(X_train,Y_train)
+        estimator.fit(bert_train_features,Y_train)
         Y_pred = estimator.predict(bert_test_features)
         test_score = f1_score(Y_test,Y_pred, average='weighted')
 
         print("logistic_regression:")
+        print("Best parameters: C = "+str(best_c)+" Max_iter = "+str(best_max_iter)+" Solver = "+best_solver)
         print("CV F1-weighted: "+str(mean_score))
         print("CV F1-weighted STD : "+str(std_score))
         print("Test F1-weighted: "+str(test_score))
@@ -588,16 +592,19 @@ if __name__ == "__main__":
     #step1_find_best_for_columns(columns, X_train, Y_train, X_test, Y_test)
     
     ### STEP2 - Run gridsearch on the best result from STEP1
-    #step2_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test)
+    
+    step2_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test)
 
     ### STEP3 - Try gridsearch with more parameters on the best result from STEP2
-    step3_further_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test)
+    
+    #step3_further_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test)
 
     ### STEP4 - Prepend to the column with the best result from STEP2 the keywords
     # and the locations (try to prepend only the keywords, only the locations and
     # both) and use the best hyperparameters from STEP3
+    
     #columns = ['ekphrasis', 'keyword_ekphrasis', 'location_ekphrasis', 'keyword_location_ekphrasis'] 
-    #step4_inspect_keywords_locations(columns, X_train, Y_train, X_test, Y_test))
+    #step4_inspect_keywords_locations(columns, X_train, Y_train, X_test, Y_test)
 
     ###### END OF EXPERIMENTS
 
