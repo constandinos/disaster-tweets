@@ -1,0 +1,14 @@
+Number of train, features: (5447, 18)
+Number of test, features: (1362, 18)
+
+Start features creation with BERT
+End of features creation
+
+
+Start cross validation for Logistic regression
+End of cross validation for Logistic regression
+
+Logistic Regression (Cross validation results):
+Best parameters: C = 0.14384498882876628 Max_iter = 50 Solver = liblinear
+(Cross validation) Average f1-weighted score: 81.30%(+/- 1.51%)
+(Test) F1-weighted score: 83.31%

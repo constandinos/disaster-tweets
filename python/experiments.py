@@ -456,7 +456,7 @@ def step2_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test):
     # We chose these two machine learning algorithms for further checking.
     clf_list = [("logistic_regression", LogisticRegression(), {'C': np.logspace(-4, 4, 20),\
                                                                'max_iter': [50, 100, 150, 200]}),
-                ("svc", SVC(), {'C': [0.1, 1, 10, 100, 1000], \
+                ("svc", SVC(), {'C': [0.1, 1, 10, 100], \
                                 'gamma': [0.01, 0.1, 1],\
                                 'kernel': ['rbf', 'linear', 'sigmoid']})]
 
@@ -592,7 +592,7 @@ if __name__ == "__main__":
     Y_train = train_df['target'].astype(str)
     Y_test = test_df['target'].astype(str)
     
-    #step1_find_best_for_columns(columns, X_train, Y_train, X_test, Y_test)
+    step1_find_best_for_columns(columns, X_train, Y_train, X_test, Y_test)
     
     ### STEP2 - Run gridsearch on the best result from STEP1
     
@@ -600,14 +600,14 @@ if __name__ == "__main__":
 
     ### STEP3 - Try gridsearch with more parameters on the best result from STEP2
     
-    #step3_further_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test)
+    step3_further_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test)
 
     ### STEP4 - Prepend to the column with the best result from STEP2 the keywords
     # and the locations (try to prepend only the keywords, only the locations and
     # both) and use the best hyperparameters from STEP3
     
-    #columns = ['ekphrasis', 'keyword_ekphrasis', 'location_ekphrasis', 'keyword_location_ekphrasis'] 
-    #step4_inspect_keywords_locations(columns, X_train, Y_train, X_test, Y_test)
+    columns = ['ekphrasis', 'keyword_ekphrasis', 'location_ekphrasis', 'keyword_location_ekphrasis'] 
+    step4_inspect_keywords_locations(columns, X_train, Y_train, X_test, Y_test)
 
     ###### END OF EXPERIMENTS
 
