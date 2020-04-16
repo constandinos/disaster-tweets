@@ -520,6 +520,7 @@ def step3_further_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test):
     best_column = 'ekphrasis'
     best_vectorizer = None
     best_ml_algorithm = None
+    print("\nColumn: " + best_column + '\n')
     # best column + Best vectorizer + Best machine learning algorithm
     train_text = X_train[best_column].to_list()
     test_text = X_test[best_column].to_list()

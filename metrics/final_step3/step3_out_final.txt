@@ -1,5 +1,8 @@
 Number of train, features: (5447, 18)
 Number of test, features: (1362, 18)
+
+Column: ekphrasis
+
 Grid search for logistic_regression
 Best parameters: {'C': 0.14384498882876628, 'max_iter': 50, 'solver': 'liblinear'}
 logistic_regression:
