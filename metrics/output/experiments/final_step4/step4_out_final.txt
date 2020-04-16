@@ -3,37 +3,37 @@ Number of test, features: (1362, 18)
 
 Column: ekphrasis
 
-logistic_regression:
-Best parameters: C = 0.14384498882876628 Max_iter = 50 Solver = liblinear
-CV F1-weighted: 0.8119534604051333
-CV F1-weighted STD : 0.010747642780975269
-Test F1-weighted: 0.8330901274217813
+SVC:
+Best parameters: C = 11 Gamma = 0.01 Kernel = rbf
+CV F1-weighted: 0.8145620951766667
+CV F1-weighted STD : 0.011628678051682073
+Test F1-weighted: 0.8313897958730371
 
 
 Column: keyword_ekphrasis
 
-logistic_regression:
-Best parameters: C = 0.14384498882876628 Max_iter = 50 Solver = liblinear
-CV F1-weighted: 0.8115347833536042
-CV F1-weighted STD : 0.015085661114410813
-Test F1-weighted: 0.822147424461986
+SVC:
+Best parameters: C = 11 Gamma = 0.01 Kernel = rbf
+CV F1-weighted: 0.8140494868372727
+CV F1-weighted STD : 0.016002265105069753
+Test F1-weighted: 0.8208329271622287
 
 
 Column: location_ekphrasis
 
-logistic_regression:
-Best parameters: C = 0.14384498882876628 Max_iter = 50 Solver = liblinear
-CV F1-weighted: 0.8059480929250515
-CV F1-weighted STD : 0.009841107069988135
-Test F1-weighted: 0.8218492879285832
+SVC:
+Best parameters: C = 11 Gamma = 0.01 Kernel = rbf
+CV F1-weighted: 0.8018357655532988
+CV F1-weighted STD : 0.01626212392606091
+Test F1-weighted: 0.8238066545122332
 
 
 Column: keyword_location_ekphrasis
 
-logistic_regression:
-Best parameters: C = 0.14384498882876628 Max_iter = 50 Solver = liblinear
-CV F1-weighted: 0.8071171879976482
-CV F1-weighted STD : 0.016772200809489733
-Test F1-weighted: 0.8257448904060363
+SVC:
+Best parameters: C = 11 Gamma = 0.01 Kernel = rbf
+CV F1-weighted: 0.807413286303573
+CV F1-weighted STD : 0.012192268301545626
+Test F1-weighted: 0.8217724630156673
 
 End execution

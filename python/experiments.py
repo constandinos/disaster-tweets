@@ -248,7 +248,7 @@ def execute(df, bert=False, doc2vec=False, tfidf=False, bow=False):
 
         print("****************************************************\n")
 """
-
+"""
 def predict_results(train_df, test_df,text_col):
     x_train = list(train_df[text_col])
     y_train = train_df['target']
@@ -276,7 +276,7 @@ def predict_results(train_df, test_df,text_col):
     submission = pd.read_csv("dataset/sample_submission.csv")
     submission['target'] = y_pred
     submission.to_csv('submission.csv', index=False)
-
+"""
 
 def choose_best_vectorizer(df):
     """
@@ -514,7 +514,7 @@ def step3_further_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test):
     # Best machine learning algorithm from STEP2 
     clf_list = [("SVC",\
                  SVC(),\
-                 {'C': [8, 9, 10, 11],\
+                 {'C': [8, 9, 10, 11, 12],\
                   'gamma': [0.005, 0.01, 0.015],\
                   'kernel': ['rbf']})]
 
@@ -534,9 +534,9 @@ def step3_further_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test):
 
 
 def step4_inspect_keywords_locations(columns, X_train, Y_train, X_test, Y_test):
-    best_c = 0.14384498882876628
-    best_max_iter = 50
-    best_solver = 'liblinear'
+    best_c = 11
+    best_gamma = 0.01
+    best_kernel = 'rbf'
     for column in columns:
         print("\nColumn: " + column + '\n')
         train_text = X_train[column].astype(str).to_list()
@@ -546,7 +546,7 @@ def step4_inspect_keywords_locations(columns, X_train, Y_train, X_test, Y_test):
         bert_train_features = fc.bert_feature_creation(train_text)
         bert_test_features = fc.bert_feature_creation(test_text)
 
-        estimator = LogisticRegression(C=best_c, max_iter=best_max_iter, solver=best_solver)
+        estimator = SVC(C=best_c, gamma=best_gamma, kernel=best_kernel)
 
         
         mean_score, std_score = cross_validation(estimator, bert_train_features, Y_train)
@@ -555,8 +555,8 @@ def step4_inspect_keywords_locations(columns, X_train, Y_train, X_test, Y_test):
         Y_pred = estimator.predict(bert_test_features)
         test_score = f1_score(Y_test,Y_pred, average='weighted')
 
-        print("logistic_regression:")
-        print("Best parameters: C = "+str(best_c)+" Max_iter = "+str(best_max_iter)+" Solver = "+best_solver)
+        print("SVC:")
+        print("Best parameters: C = "+str(best_c)+" Gamma = "+str(best_gamma)+" Kernel = "+best_kernel)
         print("CV F1-weighted: "+str(mean_score))
         print("CV F1-weighted STD : "+str(std_score))
         print("Test F1-weighted: "+str(test_score))
@@ -567,6 +567,7 @@ if __name__ == "__main__":
 # this won't be run when imported
 
     ###### START EXPERIMENTS
+    # All steps will take aproximatly 1 day on a decent computer
 
     ### STEP0 - Split initial dataset
     # !!!! DO NOT RUN THIS FUNCTION YOU WILL LOSE OUR SPLIT (SPLIT IS RANDOM)
@@ -584,17 +585,17 @@ if __name__ == "__main__":
     
 
     ### STEP1 - Find best vectorizer for each column alongside their ml algorithm
-    #columns = ['text', 'processed', 'lemmatization', 'stemming', 'no_punk_no_abb', 'ekphrasis', 'ekphrasis_rm', 'ekphrasis_stemming', 'ekphrasis_no_symtags']
     X_train = train_df.astype(str)
     X_test = test_df.astype(str)
     Y_train = train_df['target'].astype(str)
     Y_test = test_df['target'].astype(str)
     
-    #step1_find_best_for_columns(columns, X_train, Y_train, X_test, Y_test)
+    columns = ['text', 'processed', 'lemmatization', 'stemming', 'no_punk_no_abb', 'ekphrasis', 'ekphrasis_rm', 'ekphrasis_stemming', 'ekphrasis_no_symtags']
+    step1_find_best_for_columns(columns, X_train, Y_train, X_test, Y_test)
     
     ### STEP2 - Run gridsearch on the best result from STEP1
     
-    #step2_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test)
+    step2_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test)
 
     ### STEP3 - Try gridsearch with more parameters on the best result from STEP2
     
@@ -604,8 +605,8 @@ if __name__ == "__main__":
     # and the locations (try to prepend only the keywords, only the locations and
     # both) and use the best hyperparameters from STEP3
     
-    #columns = ['ekphrasis', 'keyword_ekphrasis', 'location_ekphrasis', 'keyword_location_ekphrasis'] 
-    #step4_inspect_keywords_locations(columns, X_train, Y_train, X_test, Y_test)
+    columns = ['ekphrasis', 'keyword_ekphrasis', 'location_ekphrasis', 'keyword_location_ekphrasis'] 
+    step4_inspect_keywords_locations(columns, X_train, Y_train, X_test, Y_test)
 
     ###### END OF EXPERIMENTS
 

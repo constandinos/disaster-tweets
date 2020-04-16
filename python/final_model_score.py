@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import gc
 
-from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
 from sklearn.metrics import f1_score
 
 def our_test_score():
@@ -35,24 +35,24 @@ def our_test_score():
     X_test_features = fc.bert_feature_creation(X_test)
     print("End of features creation\n")
 
-    # Best hyper-parameters for logistic regression after gridsearch
-    best_c = 0.14384498882876628
-    best_max_iter = 50
-    best_solver = 'liblinear'
+    # Best hyper-parameters for SVC after gridsearch
+    best_c = 11
+    best_gamma = 0.01
+    best_kernel = 'rbf'
 
-    # Our best estimator is logistic regression
-    estimator = LogisticRegression(C=best_c, max_iter=best_max_iter, solver=best_solver)
+    # Our best estimator is SVC
+    estimator = SVC(C=best_c, gamma=best_gamma, kernel=best_kernel)
 
     # Cross validation on the train features
-    print("\nStart cross validation for Logistic regression")
+    print("\nStart cross validation for SVC")
     mean_score, std_score = exp.cross_validation(estimator, X_train_features, Y_train)
-    print("End of cross validation for Logistic regression")
+    print("End of cross validation for SVC")
 
-    print("\nLogistic Regression (Cross validation results):")
-    print("Best parameters: C = "+str(best_c)+" Max_iter = "+str(best_max_iter)+" Solver = "+best_solver)
+    print("\nSVC (Cross validation results):")
+    print("Best parameters: C = "+str(best_c)+" Gamma = "+str(best_gamma)+" Kernel = "+best_kernel)
     print('(Cross validation) Average f1-weighted score: %.2f%%(+/- %.2f%%)' % (mean_score*100,std_score*100))
 
-    # Train logistic regression model for evaluation on the test data
+    # Train SVC model for evaluation on the test data
     estimator.fit(X_train_features,Y_train)
     Y_pred = estimator.predict(X_test_features)
     test_score = f1_score(Y_test,Y_pred, average='weighted')
@@ -65,7 +65,7 @@ def kaggle_test_submition():
     train_df_kaggle = pd.read_csv('dataset/train_dropduplicates_all.csv')
     test_df_kaggle = pd.read_csv('dataset/kaggle_test/test_ekphrasis.csv')
 
-    print("\nKaggle submition")
+    print("\nKaggle submission")
 
     X_train_kaggle = train_df_kaggle.astype(str)
     X_test_kaggle = test_df_kaggle.astype(str)
@@ -80,12 +80,12 @@ def kaggle_test_submition():
     print("End of features creation\n")
 
 
-    best_c = 0.14384498882876628
-    best_max_iter = 50
-    best_solver = 'liblinear'
-    estimator_kaggle = LogisticRegression(C=best_c, max_iter=best_max_iter, solver=best_solver)
+    best_c = 11
+    best_gamma = 0.01
+    best_kernel = 'rbf'
+    estimator_kaggle = SVC(C=best_c, gamma=best_gamma, kernel=best_kernel)
 
-    print("\nStart training Logistic Regression model")
+    print("\nStart training SVC model")
     estimator_kaggle.fit(X_train_features_kaggle,Y_train_kaggle)
     print("End training\n")
     print("\nStart predictions for Kaggle")
@@ -99,10 +99,11 @@ def kaggle_test_submition():
 if __name__ == "__main__":
 # this won't be run when imported
 
+    # You need a decent computer to run this it requires a lot of ram
     # Our test score
     our_test_score()
     
     ############################################################################
 
     # Prepare Kaggle submission
-    #kaggle_test_submition()
+    kaggle_test_submition()
