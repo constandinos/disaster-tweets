@@ -457,7 +457,7 @@ def step2_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test):
     clf_list = [("logistic_regression", LogisticRegression(), {'C': np.logspace(-4, 4, 20),\
                                                                'max_iter': [50, 100, 150, 200]}),
                 ("svc", SVC(), {'C': [0.1, 1, 10, 100, 1000], \
-                                'gamma': [0.001, 0.01, 0.1, 1],\
+                                'gamma': [0.01, 0.1, 1],\
                                 'kernel': ['rbf', 'linear', 'sigmoid']})]
 
     # Grid search for no_punk_no_abb column with tfidf vectorizer (default)
