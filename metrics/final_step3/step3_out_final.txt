@@ -1,0 +1,9 @@
+Number of train, features: (5447, 18)
+Number of test, features: (1362, 18)
+Grid search for logistic_regression
+Best parameters: {'C': 0.14384498882876628, 'max_iter': 50, 'solver': 'liblinear'}
+logistic_regression:
+CV F1-weighted: 0.8100483393110294
+CV F1-weighted STD : 0.009196130003316538
+Test F1-weighted: 0.8330901274217813
+End execution
