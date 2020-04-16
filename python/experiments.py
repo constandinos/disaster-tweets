@@ -512,15 +512,13 @@ def step2_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test):
 
 def step3_further_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test):
     # Best machine learning algorithm from STEP2 
-    clf_list = [("logistic_regression",\
-                 LogisticRegression(),\
-                 {'C': np.logspace(-4, 1, 20),\
-                  'max_iter': [50, 100, 150, 200],\
-                  'solver': ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga']})]
+    clf_list = [("SVC",\
+                 SVC(),\
+                 {'C': [8, 9, 10, 11],\
+                  'gamma': [0.005, 0.01, 0.015],\
+                  'kernel': ['rbf']})]
 
     best_column = 'ekphrasis'
-    best_vectorizer = None
-    best_ml_algorithm = None
     print("\nColumn: " + best_column + '\n')
     # best column + Best vectorizer + Best machine learning algorithm
     train_text = X_train[best_column].to_list()
@@ -592,11 +590,11 @@ if __name__ == "__main__":
     Y_train = train_df['target'].astype(str)
     Y_test = test_df['target'].astype(str)
     
-    step1_find_best_for_columns(columns, X_train, Y_train, X_test, Y_test)
+    #step1_find_best_for_columns(columns, X_train, Y_train, X_test, Y_test)
     
     ### STEP2 - Run gridsearch on the best result from STEP1
     
-    step2_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test)
+    #step2_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test)
 
     ### STEP3 - Try gridsearch with more parameters on the best result from STEP2
     
@@ -606,8 +604,8 @@ if __name__ == "__main__":
     # and the locations (try to prepend only the keywords, only the locations and
     # both) and use the best hyperparameters from STEP3
     
-    columns = ['ekphrasis', 'keyword_ekphrasis', 'location_ekphrasis', 'keyword_location_ekphrasis'] 
-    step4_inspect_keywords_locations(columns, X_train, Y_train, X_test, Y_test)
+    #columns = ['ekphrasis', 'keyword_ekphrasis', 'location_ekphrasis', 'keyword_location_ekphrasis'] 
+    #step4_inspect_keywords_locations(columns, X_train, Y_train, X_test, Y_test)
 
     ###### END OF EXPERIMENTS
 
