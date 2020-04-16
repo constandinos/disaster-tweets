@@ -460,6 +460,7 @@ def step2_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test):
                                 'gamma': [0.01, 0.1, 1],\
                                 'kernel': ['rbf', 'linear', 'sigmoid']})]
 
+    
     # Grid search for no_punk_no_abb column with tfidf vectorizer (default)
     print('Column: no_punk_no_abb, Vectorizer: bert')
     train_text = X_train['no_punk_no_abb'].to_list()
@@ -495,7 +496,7 @@ def step2_hyper_parameters_tuning(X_train, Y_train, X_test, Y_test):
 
     for i in range(0,len(model_names)):
         print(str(model_names[i])+"\t"+str(model_scores[i])+"\t"+str(model_std[i])+"\t"+str(test_scores[i]))
-
+    
     # Grid search for ekphrasis_rm column with bert
     print('Column: ekphrasis_rm, Vectorizer: bert')
     train_text = X_train['ekphrasis_rm'].to_list()
@@ -579,6 +580,7 @@ if __name__ == "__main__":
     train_df = pd.read_csv('dataset/our_train.csv')
     print("Number of train, features:", train_df.shape)
 
+    # This is the split that we used to evaluate our models
     test_df = pd.read_csv('dataset/our_test.csv')
     print("Number of test, features:", test_df.shape)
     
@@ -589,7 +591,7 @@ if __name__ == "__main__":
     X_test = test_df.astype(str)
     Y_train = train_df['target'].astype(str)
     Y_test = test_df['target'].astype(str)
-
+    
     #step1_find_best_for_columns(columns, X_train, Y_train, X_test, Y_test)
     
     ### STEP2 - Run gridsearch on the best result from STEP1
