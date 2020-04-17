@@ -20,7 +20,15 @@ haysville kansas:kansas city missouri
 boston massachusetts:massachusetts united states
 massachusetts:massachusetts united states
 charlotte:charlotte north carolina
-u s':united states
+uk:united kingdom
+usa:united states
+us:united states
+u.s:united states
+gb:great britain
+nyc:new york
+england:united kingdom
+dc:district of columbia
+u s:united states
 u s a and canada:united states canada
 u s a global members site:united states
 u s northern virginia:united states northern virginia
