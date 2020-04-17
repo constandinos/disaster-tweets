@@ -40,6 +40,9 @@ from spellchecker import SpellChecker
 # reference: https://github.com/cbaziotis/ekphrasis
 # pip install ekphrasis
 from ekphrasis.classes.preprocessor import TextPreProcessor
+from ekphrasis.classes.tokenizer import SocialTokenizer
+from ekphrasis.dicts.emoticons import emoticons
+from ekphrasis.dicts.noslang.slangdict import slangdict
 
 
 # ============================================================================ #
@@ -358,61 +361,32 @@ def correctSpelling(tweet_list):
     return processed_tweet
 
 
-def replaceAbbreviations(tweet_list, abbreviation_dict):
+def replaceFromDictionary(tweet_list, dictionary):
     """
-    Replaces abbreviation with the corresponding full text from dictionary.
+    Replaces words included in the dictionary given with their corresponding value.
 
     Parameters
     ----------
     tweet_list : list of str
         list of string-words to be processed.
-    abbreviation_dict : dictionary
-        dictionary of abbreviation.
+    dictionary : dictionary
+        dictionary of words to be replaced with the correspinding value.
 
     Returns: 
     --------
     list of str
-        given tweet-list with the abbreviations replaced.
+        given tweet-list with the words inlcuded in the dictionary provided replaced.
     """
     processed_list = []
     for word in tweet_list:
-        if word in abbreviation_dict:
-            if len(abbreviation_dict.get(word).split()) > 1:  # in case of multiple words
-                processed_list.extend(abbreviation_dict.get(word).split())
+        if word in dictionary:
+            if len(dictionary.get(word).split()) > 1:  # in case of multiple words in value
+                processed_list.extend(dictionary.get(word).split())
             else:
-                processed_list.append(abbreviation_dict.get(word))
+                processed_list.append(dictionary.get(word))
         else:
             processed_list.append(word)
     return processed_list
-
-
-def replaceContractions(tweet_list, contraction_dict):
-    """
-    Replaces contractions with the corresponding full text from dictionary.
-
-    Parameters
-    ----------
-    tweet_list : list of str
-        list of string-words to be processed.
-    contraction_dict : dictionary
-        dictionary of contractions.
-
-    Returns
-    ------- 
-    list of str
-        given tweet-list with the contractions replaced.
-    """
-    processed_list = []
-    for word in tweet_list:
-        if word in contraction_dict:
-            if len(contraction_dict.get(word).split()) > 1:  # in case of multiple words
-                processed_list.extend(contraction_dict.get(word).split())
-            else:
-                processed_list.append(contraction_dict.get(word))
-        else:
-            processed_list.append(word)
-    return processed_list
-
 
 def removeStopWords(tweet_list):
     """
@@ -474,7 +448,7 @@ def preprocess_tweet(tweet, remove_url = True, remove_usernames = True,
                      remove_non_ascii = True, remove_non_printable = True,
                      remove_repeated = True, replace_html_char = True,
                      to_lower_case = True, text_processor = None, 
-                     abbreviation_dict = None, contraction_dict = None,
+                     dictionaries = None, # list of dictionaries
                      remove_nums = True, remove_pun = True,
                      spelling = True, remove_stopwords = True,
                      lemmatization = False, stemming = False):
@@ -509,8 +483,9 @@ def preprocess_tweet(tweet, remove_url = True, remove_usernames = True,
 
     tweet_list = tweet.split()
 
-    if abbreviation_dict:   tweet_list = replaceAbbreviations(tweet_list, abbreviation_dict)
-    if contraction_dict:    tweet_list = replaceContractions(tweet_list, contraction_dict)
+    if dictionaries:   
+        for d in dictionaries:
+            tweet_list = replaceFromDictionary(tweet_list, d)
 
     if remove_nums:         tweet_list = (removeNums(' '.join(tweet_list))).split()
     if remove_pun:          tweet_list = (removePunctuation(' '.join(tweet_list))).split()
@@ -524,45 +499,126 @@ def preprocess_tweet(tweet, remove_url = True, remove_usernames = True,
     return tweet_list
 
 
-# ============================================================================ #
-#                                   Load data                                  #
-# ============================================================================ #
+if __name__ == "__main__":
+    # Load data
+    abbreviation_dict = {}
+    with open("../dictionaries/abbreviations.txt") as f:
+        for line in f:
+            (key, val) = line.split('\t')
+            abbreviation_dict[(key)] = val.replace('\n', '')
 
-abbreviation_dict = {}
-with open("../dictionaries/abbreviations.txt") as f:
-    for line in f:
-        (key, val) = line.split('\t')
-        abbreviation_dict[(key)] = val.replace('\n', '')
+    contraction_dict = {}
+    with open("../dictionaries/contractions.txt") as f:
+        for line in f:
+            (key, val) = line.split(':')
+            contraction_dict[(key)] = val.replace('\n', '')
 
-contraction_dict = {}
-with open("../dictionaries/contractions.txt") as f:
-    for line in f:
-        (key, val) = line.split(':')
-        contraction_dict[(key)] = val.replace('\n', '')
+    states_dict = {}
+    with open("../dictionaries/states.txt") as f:
+        for line in f:
+            (key, val) = line.split(':')
+            states_dict[(key)] = val.replace('\n', '')
 
-train_df = pd.read_csv('../dataset/train.csv')
-train_df.set_index('id', inplace=True)
+    location_fixes_dict = {}
+    with open("../dictionaries/location_fixes.txt") as f:
+        for line in f:
+            (key, val) = line.split(':')
+            location_fixes_dict[(key)] = val.replace('\n', '')
 
+    train_df = pd.read_csv('../dataset/train.csv')
+    train_df.set_index('id', inplace=True)
 
-# ============================================================================ #
-#                                Process tweets                                #
-# ============================================================================ #
+    # set ekphrasis text preprocessor object
+    text_processor = TextPreProcessor(
+        # terms that will be normalized
+        normalize=['url', 'email', 'percent', 'money', 'phone', 'user',
+                   'time', 'url', 'date', 'number'],
+        fix_html=True,  # fix HTML tokens
+    
+        # corpus from which the word statistics are going to be used 
+        # for word segmentation 
+        segmenter="twitter", 
+    
+        # corpus from which the word statistics are going to be used 
+        # for spell correction
+        corrector="twitter", 
+    
+        unpack_hashtags=True,  # perform word segmentation on hashtags
+        unpack_contractions=True,  # Unpack contractions (can't -> can not)
+        spell_correct_elong=True,  # spell correction for elongated words
+    
+        # select a tokenizer. You can use SocialTokenizer, or pass your own
+        # the tokenizer, should take as input a string and return a list of tokens
+        tokenizer=SocialTokenizer(lowercase=True).tokenize,
+    
+        # list of dictionaries, for replacing tokens extracted from the text,
+        # with other expressions. You can pass more than one dictionaries.
+        dicts=[emoticons, ] # slangdict
+    )
+    # tags used in ekphrasis preprocessing
+    tags = ['<url>', '<email>', '<percent>', '<money>', '<phone>', '<user>', '<time>', '<date>', '<number>']
 
-# perform word segmentation on hashtags
-text_processor = TextPreProcessor(unpack_hashtags=True)
+    # preprocessor to expand hashtags
+    hashtag_preprocessor = TextPreProcessor(unpack_hashtags=True)
+    # Process tweets
+    train_df['keyword'] = train_df['keyword'].astype(str)
+    train_df['location'] = train_df['location'].astype(str)
 
-for index, row in train_df.iterrows():
-    processed = preprocess_tweet(row['text'],
-                                 abbreviation_dict=abbreviation_dict,
-                                 contraction_dict=contraction_dict,
-                                 text_processor=text_processor,
-                                 remove_stopwords=False)
+    for index, row in train_df.iterrows():
+        # keyword preprocesing
+        train_df.at[index, 'keyword'] = row['keyword'].replace('%20', ' ')
 
-    train_df.at[index, 'processed'] = ' '.join(processed)
-    processed = removeStopWords(processed)
-    train_df.at[index, 'lemmatization'] = ' '.join(lemmatization(processed))
-    train_df.at[index, 'stemming'] = ' '.join(stemming(processed))
-    print("record #{} processing finished".format(index))
+        # location preprocessing
+        if not row['location'] == row['location']: 
+            train_df.at[index, 'location_processed'] = 'nan'
+        else:
+            train_df.at[index, 'location_processed'] = ' '.join(preprocess_tweet(row['location'],
+                                                                            dictionaries=[states_dict, location_fixes_dict],
+                                                                            text_processor=hashtag_preprocessor,
+                                                                            remove_stopwords=False))
+        # text preprocessing
+        processed = preprocess_tweet(row['text'],
+                                     dictionaries=[abbreviation_dict, contraction_dict],
+                                     text_processor=hashtag_preprocessor,
+                                     remove_stopwords=False)
 
-# save processed dataframe to csv
-train_df.to_csv('../dataset/train_processed.csv')
+        train_df.at[index, 'processed'] = ' '.join(processed)
+        processed = removeStopWords(processed)
+        train_df.at[index, 'lemmatization'] = ' '.join(lemmatization(processed))
+        train_df.at[index, 'stemming'] = ' '.join(stemming(processed))
+
+        train_df.at[index, 'no_punc_no_abb'] = ' '.join(preprocess_tweet(row['text'],
+                                                                         dictionaries=[contraction_dict],
+                                                                         text_processor=hashtag_preprocessor,
+                                                                         remove_pun=False,
+                                                                         spelling=False,
+                                                                         remove_stopwords=False))
+
+        # ekphrasis text preprocessing
+        train_df.at[index, 'ekphrasis'] = ' '.join(text_processor.pre_process_doc(row['text']))
+        train_df.at[index, 'ekphrasis_no_symtags'] = train_df.at[index, 'ekphrasis'].replace('>', '').replace('<', '')
+        text = train_df.at[index, 'ekphrasis']
+        for t in tags:
+            text  = text.replace(t, '')
+        train_df.at[index, 'ekphrasis_rm'] = removeNums(removePunctuation(text))
+
+        text = removeStopWords(train_df.at[index, 'ekphrasis_rm'].split())
+        train_df.at[index, 'ekphrasis_lemmatization'] = ' '.join(lemmatization(text))
+        train_df.at[index, 'ekphrasis_stemming'] = ' '.join(stemming(text))
+
+        # append keyword/location on ekphrasis column
+        keyword = ''
+        location = ''
+        if not train_df.at[index, 'keyword'] == 'nan':
+            keyword = str(train_df.at[index, 'keyword']) + ' '
+
+        if not train_df.at[index, 'location_processed'] == 'nan':
+            location = str(train_df.at[index, 'location_processed']) + ' '
+
+        train_df.at[index, 'keyword_ekphrasis'] = keyword + str(train_df.at[index, 'ekphrasis'])
+        train_df.at[index, 'location_ekphrasis'] = location + str(train_df.at[index, 'ekphrasis'])
+        train_df.at[index, 'keyword_location_ekphrasis'] = keyword + location + str(train_df.at[index, 'ekphrasis'])
+        print("record #{} processing finished".format(index))
+
+    # save processed dataframe to csv
+    train_df.to_csv('../dataset/train_processed.csv')
