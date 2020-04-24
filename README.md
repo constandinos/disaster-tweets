@@ -1,41 +1,43 @@
-# Preprocessing
-## Statistics
-+ per column of data 
-+ how many tweets
-+ how many users
-+ how many languages
-+ tweets per users
-+ likes/tweets/shares... per user/tweet
-+ length of tweets
-+ user-user interaction?
-+ timestamps?
-+ text statistics
+# Real or Not? NLP with Disaster Tweets
+Related code and data for [this Kaggle competition](https://www.kaggle.com/c/nlp-getting-started).
 
-## Cleaning
-+ fix format
-+ missing/non valid/null values
-    + drop
-    + replace 
-+ how to handle the text - bert?
-+ choose only one language? 
-+ outliers
+## Competition Description
+Twitter has become an important communication channel in times of emergency.  
 
-## Features
-+ what features we want
-+ extracted features from statistics
-+ feature reduction
-+ feature selection
-    + importance
-    + correlations
+The ubiquitousness of smartphones enables people to announce an emergency they’re observing in real-time. Because of this, more agencies are interested in programatically monitoring Twitter (i.e. disaster relief organizations and news agencies).
 
+### Challenge
+Build a machine learning model that predicts which Tweets are about real disasters and which one’s aren’t.
 
-# ML
-+ what do we want to predict
-+ algorithms we can use
-+ what parameters and what values to try per algorithm
-+ normalize
-+ split dataset
-+ performance?
-+ k-fold cross-validation!
+## Objectives
++ apply several data analysis methodologies to understand well the given data
++ apply various NLP preprcessing techniques and examine how they affect model performance
++ experiment with several machine learning models and improve overall score
 
-# Useful links
+## Data analysis
+Some results (plots) of the data analysis process can be found in directory [graphs](https://github.com/constandinos/disaster-tweets/tree/master/graphs).
+
+## Preprocessing
+Details related to the applied preprocessing can be found [here](./dataset/README.md).
+
+We have also tested applying preprocessing using only the library [ekphrasis](https://github.com/cbaziotis/ekphrasis), which is a text processing tool, geared towards text from social networks and compare our results.
+
+## Text Data Vectorization
+Methods tested for data vectorization:
++ DistilBERT
++ gensim doc2vec
++ TF-IDF
++ Bag of words
+
+## ML
+Machine learning models tested:
++ Logistic Regression
++ K-nearest neighbors
++ SVC
++ Random Forest
++ Decision Trees
+
+## Authors
+Andreas Tsouloupas  
+Constatninos Demetriou    
+George Hadjiantonis
