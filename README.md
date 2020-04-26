@@ -39,5 +39,5 @@ Machine learning models tested:
 
 ## Authors
 Andreas Tsouloupas  
-Constatninos Demetriou    
+Constandinos Demetriou    
 George Hadjiantonis
