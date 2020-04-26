@@ -37,6 +37,56 @@ Machine learning models tested:
 + Random Forest
 + Decision Trees
 
+## Requirements
+In **Anaconda enviroment**
+
+### Data preprocessing `tweet_preprocessing.py`
+```
+pip install emot nltk requests inflect pyspellchecker ekphrasis
+```
+
+### Feature creation `feature_creation.py`
+```
+conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
+conda install -c conda-forge transformers
+conda install -c anaconda gensim
+```
+
+### Keras `keras_nn.py`
+To install the current release of GPU TensorFlow
+```
+conda create -n tf-gpu tensorflow-gpu
+conda activate tf-gpu
+conda install --name tf-gpu pylint -y
+```
+To install the current release of CPU-only TensorFlow
+```
+conda create -n tf tensorflow
+conda activate tf
+conda install --name tf pylint -y
+```
+To install tensorflow this package with conda run one of the following:
+```
+conda install -c conda-forge tensorflow-hub
+conda install -c conda-forge/label/gcc7 tensorflow-hub
+conda install -c conda-forge/label/cf201901 tensorflow-hub
+conda install -c conda-forge/label/cf202003 tensorflow-hub
+```
+To install tokenization package with conda run: (only for Linux :/)
+```
+conda install -c powerai sentencepiece
+```
+To install pandas package with conda run:
+```
+conda install -c anaconda pandas
+```
+## Run (in the following order)
+1. `visualization.py`
+2. `tweet_preprocessing.py` and `dropduplicates.py`
+3. `experiments.py`
+4. `final_model_score.py`
+5. `keras_nn.py` (optional for Kaggle's results)
+
 ## Authors
 Andreas Tsouloupas  
 Constandinos Demetriou    
