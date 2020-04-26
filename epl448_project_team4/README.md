@@ -40,19 +40,19 @@ Machine learning models tested:
 ## Requirements
 In **Anaconda enviroment**
 
-### 1. Data preprocessing `tweet_preprocessing.py`
+### Data preprocessing `tweet_preprocessing.py`
 ```
 pip install emot nltk requests inflect pyspellchecker ekphrasis
 ```
 
-### 3. Feature creation `feature_creation.py`
+### Feature creation `feature_creation.py`
 ```
 conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
 conda install -c conda-forge transformers
 conda install -c anaconda gensim
 ```
 
-### 4. Keras `keras_nn.py`
+### Keras `keras_nn.py`
 To install the current release of GPU TensorFlow
 ```
 conda create -n tf-gpu tensorflow-gpu
