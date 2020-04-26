@@ -259,25 +259,23 @@ class DisasterClassifier:
 
 
 
-df_train = pd.read_csv('dataset/train_dropduplicates.csv')
-df_test = pd.read_csv('dataset/test_processed.csv')
+df_train = pd.read_csv('dataset/train_dropduplicates_all.csv')
+df_test = pd.read_csv('dataset/kaggle_test/test_ekphrasis.csv')
 print("Number of tweets, features:",df_train.shape)
 print("Number of test, features:",df_test.shape)
 
-clf = DisasterClassifier(lr=0.000001, epochs=4, batch_size=8)
+clf = DisasterClassifier(lr=0.000001, epochs=4, batch_size=32)
 
 
 #clf.cross_validation([str(x) for x in list(df_train['processed_text_deep_without_url'])],
 #                                list(df_train['target']))
 
-clf.plot_learning_curves([str(x) for x in list(df_train['processed_text_deep_without_url'])],
-                                list(df_train['target']))
+#clf.plot_learning_curves([str(x) for x in list(df_train['processed_text_deep_without_url'])],
+#                                list(df_train['target']))
 
-"""
-clf.train([str(x) for x in list(df_train['processed_text_deep_without_url'])],
+clf.train([str(x) for x in list(df_train['ekphrasis'])],
                                 list(df_train['target']))                                                               
-y_pred = clf.predict([str(x) for x in list(df_test['processed_text_deep_without_url'])])
+y_pred = clf.predict([str(x) for x in list(df_test['ekphrasis'])])
 submission = pd.read_csv("dataset/sample_submission.csv")
 submission['target'] = y_pred
-submission.to_csv('submission.csv', index=False)
-"""
+submission.to_csv('submission_keras.csv', index=False)
