@@ -63,7 +63,7 @@ def our_test_score():
 def kaggle_test_submition():
     ## Create kaggle sumbission on their test data
     train_df_kaggle = pd.read_csv('dataset/train_dropduplicates_all.csv')
-    test_df_kaggle = pd.read_csv('dataset/kaggle_test/test_ekphrasis.csv')
+    test_df_kaggle = pd.read_csv('dataset/test_ekphrasis.csv')
 
     print("\nKaggle submission")
 

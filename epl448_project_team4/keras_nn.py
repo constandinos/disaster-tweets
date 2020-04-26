@@ -260,7 +260,7 @@ class DisasterClassifier:
 
 
 df_train = pd.read_csv('dataset/train_dropduplicates_all.csv')
-df_test = pd.read_csv('dataset/kaggle_test/test_ekphrasis.csv')
+df_test = pd.read_csv('dataset/test_ekphrasis.csv')
 print("Number of tweets, features:",df_train.shape)
 print("Number of test, features:",df_test.shape)
 
