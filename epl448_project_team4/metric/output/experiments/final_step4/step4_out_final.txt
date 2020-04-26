@@ -1,0 +1,39 @@
+Number of train, features: (5447, 18)
+Number of test, features: (1362, 18)
+
+Column: ekphrasis
+
+SVC:
+Best parameters: C = 11 Gamma = 0.01 Kernel = rbf
+CV F1-weighted: 0.8145620951766667
+CV F1-weighted STD : 0.011628678051682073
+Test F1-weighted: 0.8313897958730371
+
+
+Column: keyword_ekphrasis
+
+SVC:
+Best parameters: C = 11 Gamma = 0.01 Kernel = rbf
+CV F1-weighted: 0.8140494868372727
+CV F1-weighted STD : 0.016002265105069753
+Test F1-weighted: 0.8208329271622287
+
+
+Column: location_ekphrasis
+
+SVC:
+Best parameters: C = 11 Gamma = 0.01 Kernel = rbf
+CV F1-weighted: 0.8018357655532988
+CV F1-weighted STD : 0.01626212392606091
+Test F1-weighted: 0.8238066545122332
+
+
+Column: keyword_location_ekphrasis
+
+SVC:
+Best parameters: C = 11 Gamma = 0.01 Kernel = rbf
+CV F1-weighted: 0.807413286303573
+CV F1-weighted STD : 0.012192268301545626
+Test F1-weighted: 0.8217724630156673
+
+End execution

@@ -1,0 +1,31 @@
+Number of train, features: (5447, 18)
+Number of test, features: (1362, 18)
+Column: no_punk_no_abb, Vectorizer: bert
+Grid search for logistic_regression
+Best parameters: {'C': 0.08858667904100823, 'max_iter': 50}
+Grid search for svc
+Best parameters: {'C': 10, 'gamma': 0.01, 'kernel': 'rbf'}
+logistic_regression	0.8086389088912597	0.018638620275205024	0.820208838437552
+svc	0.8117933458417292	0.015303100619065044	0.8284132654606813
+Column: lemmatization, Vectorizer: tfidf (max_features=5000)
+Grid search for logistic_regression
+Best parameters: {'C': 1.623776739188721, 'max_iter': 50}
+Grid search for svc
+Best parameters: {'C': 1, 'gamma': 0.01, 'kernel': 'linear'}
+logistic_regression	0.7815569889693769	0.016237263622252505	0.7995576358328146
+svc	0.7769055161582143	0.009911444006520994	0.7876121850936703
+Column: ekphrasis, Vectorizer: bert
+Grid search for logistic_regression
+Best parameters: {'C': 0.23357214690901212, 'max_iter': 200}
+Grid search for svc
+Best parameters: {'C': 10, 'gamma': 0.01, 'kernel': 'rbf'}
+logistic_regression	0.8117541168595823	0.01341750106344563	0.8325221580350368
+svc	0.8111214993695504	0.013990120919919243	0.8374439054937207
+Column: ekphrasis_rm, Vectorizer: bert
+Grid search for logistic_regression
+Best parameters: {'C': 0.615848211066026, 'max_iter': 100}
+Grid search for svc
+Best parameters: {'C': 10, 'gamma': 0.01, 'kernel': 'rbf'}
+logistic_regression	0.8025942512760544	0.012482350380653857	0.8227788459874155
+svc	0.8123307440231169	0.013893118888200802	0.8255962903463705
+End execution

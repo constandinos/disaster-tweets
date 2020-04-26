@@ -1,0 +1,12 @@
+Number of train, features: (5447, 18)
+Number of test, features: (1362, 18)
+
+Column: ekphrasis
+
+Grid search for SVC
+Best parameters: {'C': 11, 'gamma': 0.01, 'kernel': 'rbf'}
+SVC:
+CV F1-weighted: 0.8167210464369721
+CV F1-weighted STD : 0.01924381553830976
+Test F1-weighted: 0.8313897958730371
+End execution

@@ -1,0 +1,26 @@
+Number of train, features: (5447, 18)
+Number of test, features: (1362, 18)
+
+Start features creation with BERT
+End of features creation
+
+
+Start cross validation for SVC
+End of cross validation for SVC
+
+SVC (Cross validation results):
+Best parameters: C = 11 Gamma = 0.01 Kernel = rbf
+(Cross validation) Average f1-weighted score: 81.05%(+/- 1.66%)
+(Test) F1-weighted score: 83.14%
+
+Kaggle submission
+Start features creation with BERT for Kaggle
+End of features creation
+
+
+Start training SVC model
+End training
+
+
+Start predictions for Kaggle
+End predictions

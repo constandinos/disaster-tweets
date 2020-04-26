@@ -1,0 +1,55 @@
+washington d c:washington district of columbia
+new york new york:new york
+los angeles california:los angeles california united states
+london:london united kingdom
+new york city new york:new york
+brooklyn new york:brooklyn new york
+denver colorado fun times:denver colorado
+california:california united states
+world wide:worldwide
+toronto on canada:toronto canada
+torondto worldwide:toronto canada
+toronto on:toronto canada
+toronto:toronto canada
+planet earth:earth
+victoria australia earth:victoria australia
+houston:houston texas
+johannesburg:johannesburg south africa
+kansas city:kansas city missouri
+haysville kansas:kansas city missouri
+boston massachusetts:massachusetts united states
+massachusetts:massachusetts united states
+charlotte:charlotte north carolina
+uk:united kingdom
+usa:united states
+us:united states
+u.s:united states
+gb:great britain
+nyc:new york
+england:united kingdom
+dc:district of columbia
+u s:united states
+u s a and canada:united states canada
+u s a global members site:united states
+u s northern virginia:united states northern virginia
+united states east a':united states
+vanderbilt brooklyn new york:brooklyn new york
+new york united states:new york
+melbourne:melbourne australia
+boston:boston massachusetts
+orlando:orlando florida
+orlando cocoa beach florida:orlando florida
+orlando florida united states:orlando florida
+new york atl:new york
+new york brooklyn:brooklyn new york city
+new york city metro:new york city
+new york city area:new york city
+new york capital district:new york
+new york live easy:new york
+new york worldwide:new york
+new your:new york
+atlanta fau class of:atlanta georgia
+atlanta g a:atlanta georgia
+atlanta georgia united states:atlanta georgia
+atlanta ish georgia:atlanta georgia
+t:<coordinates>
