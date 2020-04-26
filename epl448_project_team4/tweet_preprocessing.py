@@ -621,4 +621,4 @@ if __name__ == "__main__":
         print("record #{} processing finished".format(index))
 
     # save processed dataframe to csv
-    train_df.to_csv('dataset/train_processed.csv')
+    train_df.to_csv('dataset/train_processed_all.csv')
