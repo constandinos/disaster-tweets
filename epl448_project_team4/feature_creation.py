@@ -592,7 +592,7 @@ def reports(features, labels, model):
     print("Linear Regression Classifier:")
     print(classification_report(test_labels, y_pred))
 
-
+"""
 if __name__ == "__main__":
 # this won't be run when imported
     ## Read datasets
@@ -611,3 +611,4 @@ if __name__ == "__main__":
     reduction_components_evaluation_report_lda(features, tweet_df['target'])
     reduction_components_evaluation_report(features, pca=True)
     reduction_components_evaluation_report(features, pca=False)
+"""
