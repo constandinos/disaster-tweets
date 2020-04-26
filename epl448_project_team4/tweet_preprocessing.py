@@ -525,6 +525,7 @@ if __name__ == "__main__":
             (key, val) = line.split(':')
             location_fixes_dict[(key)] = val.replace('\n', '')
 
+    # for preprocessing test file change below path to 'dataset/test.csv'
     train_df = pd.read_csv('dataset/train.csv')
     train_df.set_index('id', inplace=True)
 
