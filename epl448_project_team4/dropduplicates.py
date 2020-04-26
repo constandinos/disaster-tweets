@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = pd.read_csv('dataset/train_processed.csv')
+df = pd.read_csv('dataset/train_processed_all.csv')
 group = df.groupby('processed')['id'].unique()
 
 drop_id = []
@@ -38,4 +38,4 @@ print("number of tubles with different target: {}".format(
 # drop duplicates
 df.drop(drop_id, inplace=True)
 # save to csv
-df.to_csv('dataset/train_dropduplicates.csv')
+df.to_csv('dataset/train_dropduplicates_all.csv')
